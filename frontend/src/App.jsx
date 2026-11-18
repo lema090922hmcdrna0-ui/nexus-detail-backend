@@ -33,7 +33,7 @@ function App() {
   const [inventario, setInventario] = useState([
     { id: 1, nombre_producto: 'Shampoo pH Neutro Snow Foam (1L)', categoria_insumo: 'Químicos', stock: 15, precio_unitario: 320.00, proveedor: 'Meguiars Pro' },
     { id: 2, nombre_producto: 'Toalla Microfibra Secado 1200 GSM', categoria_insumo: 'Accesorios', stock: 25, precio_unitario: 250.00, proveedor: 'The Rag Company' },
-    { id: 3, nombre_producto: 'Cera Líquida Carnauba Brasileña', categoria_insumo: 'Químicos', stock: 8, precio_unitario: 480.00, proveedor: 'Chemical Guys' },
+    { id: 3, nombre_producto: 'Cera Líquida Carnauba Brasileña', categoria_insumo: 'Químicos', stock: 18, precio_unitario: 480.00, proveedor: 'Chemical Guys' },
     { id: 4, nombre_producto: 'Gel Restaurador de Plásticos y Molduras', categoria_insumo: 'Químicos', stock: 12, precio_unitario: 390.00, proveedor: 'Sonax Professional' }
   ]);
 
@@ -73,7 +73,7 @@ function App() {
   const [nuevoServImg, setNuevoServImg] = useState('');
   const [nuevoServCat, setNuevoServCat] = useState('1');
   const [servicioExito, setServicioExito] = useState(false);
-  const [servicioEditando, setServicioEditando] = useState(null); // Estado para editar servicio
+  const [servicioEditando, setServicioEditando] = useState(null);
 
   // Admin Productos
   const [nuevoProdNombre, setNuevoProdNombre] = useState('');
@@ -165,9 +165,17 @@ function App() {
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
 
+  // 🛡️ VALIDACIÓN DE STOCK AL AGREGAR AL CARRITO
   const agregarAlCarrito = (producto) => {
     setCarrito((prev) => {
       const existe = prev.find((item) => item.id === producto.id);
+      const cantidadActual = existe ? existe.cantidad : 0;
+
+      if (cantidadActual + 1 > producto.stock) {
+        alert(`¡Stock máximo alcanzado! Solo hay ${producto.stock} unidades disponibles de "${producto.nombre_producto}".`);
+        return prev;
+      }
+
       if (existe) {
         return prev.map((item) =>
           item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item
@@ -181,12 +189,23 @@ function App() {
     setCarrito((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // 🛡️ VALIDACIÓN DE STOCK AL USAR LOS BOTONES + Y - EN EL CARRITO
   const cambiarCantidadCarrito = (id, delta) => {
     setCarrito((prev) =>
       prev
         .map((item) => {
           if (item.id === id) {
             const nuevaCant = item.cantidad + delta;
+            
+            // Buscar el producto en el inventario actual para verificar su stock real
+            const productoOriginal = inventario.find(p => p.id === id);
+            const stockMaximo = productoOriginal ? productoOriginal.stock : item.stock;
+
+            if (nuevaCant > stockMaximo) {
+              alert(`¡No puedes agregar más! El stock máximo disponible es de ${stockMaximo} unidades.`);
+              return item; // Bloquea el incremento si supera el stock
+            }
+
             return nuevaCant > 0 ? { ...item, cantidad: nuevaCant } : null;
           }
           return item;
@@ -310,7 +329,6 @@ function App() {
     }
   };
 
-  // Función para activar el modal de edición de servicio
   const prepararEdicionServicio = (servicio) => {
     setServicioEditando(servicio);
   };
@@ -1044,7 +1062,7 @@ function App() {
               </div>
 
               {/* Pedidos de Tienda */}
-              <div style={{ backgroundColor: '#12151c', padding: '2rem', borderRadius: '12px', border: '1px solid #d4af37', overflowX: 'auto', height: 'fit-content' }}>
+              <div style={{ backgroundColor: '#12151c', padding: '2rem', borderRadius: '12px', border: '1px solid #1a2233', overflowX: 'auto', height: 'fit-content' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                   <div>
                     <h3 style={{ color: '#d4af37', marginTop: 0, marginBottom: '0.3rem', fontSize: '1.35rem' }}>🛒 Pedidos de Tienda</h3>
