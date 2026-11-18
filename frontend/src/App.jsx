@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // ASEGÚRATE DE PONER AQUÍ TU URL PÚBLICA DE RAILWAY (sin diagonal al final)
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://nexus-detail-backend-production.up.railway.app';
 
 function App() {
   const [tab, setTab] = useState('servicios');
