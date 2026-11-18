@@ -1063,6 +1063,35 @@ function App() {
                   <button type="submit" style={{ width: '100%', padding: '0.9rem', backgroundColor: '#d4af37', color: '#07090e', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>REGISTRAR SERVICIO</button>
                 </form>
               </div>
+              {/* Sección de Gestión de Servicios en Admin */}
+<div style={{ marginTop: '2.5rem', background: '#12151c', padding: '2.5rem', borderRadius: '11px', border: '1px solid #1a2233' }}>
+  <h3 style={{ color: '#d4af37', fontSize: '1.4rem', marginBottom: '1.5rem' }}>🛠️ Gestión y Edición de Servicios Activos</h3>
+  
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    {servicios.map((servicio) => (
+      <div key={servicio.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1a2233', padding: '1rem', borderRadius: '8px', border: '1px solid #2a3447' }}>
+        <div>
+          <h4 style={{ color: '#fff', margin: '0 0 0.3rem 0', fontSize: '1.1rem' }}>{servicio.nombre}</h4>
+          <span style={{ color: '#d4af37', fontSize: '0.9rem' }}>Precio: ${servicio.precio}</span>
+        </div>
+        <div style={{ display: 'flex', gap: '0.8rem' }}>
+          <button 
+            onClick={() => prepararEdicionServicio(servicio)} 
+            style={{ padding: '0.5rem 1rem', background: '#d4af37', color: '#12151c', border: 'none', borderRadius: '6px', fontWeight: '700', cursor: 'pointer' }}
+          >
+            Editar
+          </button>
+          <button 
+            onClick={() => eliminarServicio(servicio.id)} 
+            style={{ padding: '0.5rem 1rem', background: '#8b0000', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '700', cursor: 'pointer' }}
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
               {/* Agregar Producto */}
               <div style={{ backgroundColor: '#12151c', padding: '2.5rem', borderRadius: '12px', border: '1px solid #1a2233' }}>
