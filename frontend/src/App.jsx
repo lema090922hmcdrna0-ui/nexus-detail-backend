@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-// ASEGÚRATE DE PONER AQUÍ TU URL PÚBLICA DE RAILWAY (sin diagonal al final)
+// URL PÚBLICA DE TU BACKEND EN RAILWAY
 const API_URL = 'https://nexus-detail-backend-production.up.railway.app';
 
 function App() {
@@ -12,12 +12,12 @@ function App() {
   const [loginError, setLoginError] = useState(false);
 
   const [servicios, setServicios] = useState([
-    { id: 1, nombre: 'Lavado Detallado Full-Spec', descripcion: 'Descontaminación férrica y sellador hidrofóbico.', precio: 950.00, nombre_categoria: 'Estética Exterior & Detailing', imagen_url: 'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&w=800&q=80' },
-    { id: 2, nombre: 'Recubrimiento Cerámico 9H (3 Años)', descripcion: 'Protección extrema contra rayos UV y brillo espejo.', precio: 4800.00, nombre_categoria: 'Protección Cerámica & PPF', imagen_url: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=800&q=80' },
-    { id: 3, nombre: 'Detallado Profundo de Interiores', descripcion: 'Limpieza con vapor e hidratación de asientos en piel.', precio: 1600.00, nombre_categoria: 'Interiores & Tapicería', imagen_url: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80' },
-    { id: 4, nombre: 'Pulido en 3 Pasos (Corrección Total)', descripcion: 'Eliminación del 95% de hologramas y swirls.', precio: 3800.00, nombre_categoria: 'Corrección de Pintura', imagen_url: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80' },
-    { id: 5, nombre: 'Tratamiento PPF en Fascia y Cofre', descripcion: 'Película autocurable contra impactos de piedra.', precio: 9200.00, nombre_categoria: 'Protección Cerámica & PPF', imagen_url: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=800&q=80' },
-    { id: 6, nombre: 'Descontaminación y Sellado de Rines', descripcion: 'Tratamiento térmico para repeler polvo de balatas.', precio: 1200.00, nombre_categoria: 'Tratamientos Especiales Rines & Cristales', imagen_url: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&w=800&q=80' }
+    { id: 1, nombre: 'Lavado Detallado Full-Spec', descripcion: 'Descontaminación férrica y sellador hidrofóbico.', precio: 950.00, nombre_categoria: 'Estética Exterior & Detailing', imagen_url: 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=800&q=80' },
+    { id: 2, nombre: 'Recubrimiento Cerámico 9H (3 Años)', descripcion: 'Protección extrema contra rayos UV y brillo espejo.', precio: 4800.00, nombre_categoria: 'Protección Cerámica & PPF', imagen_url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80' },
+    { id: 3, nombre: 'Detallado Profundo de Interiores', descripcion: 'Limpieza con vapor e hidratación de asientos en piel.', precio: 1600.00, nombre_categoria: 'Interiores & Tapicería', imagen_url: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80' },
+    { id: 4, nombre: 'Pulido en 3 Pasos (Corrección Total)', descripcion: 'Eliminación del 95% de hologramas y swirls.', precio: 3800.00, nombre_categoria: 'Corrección de Pintura', imagen_url: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800&q=80' },
+    { id: 5, nombre: 'Tratamiento PPF en Fascia y Cofre', descripcion: 'Película autocurable contra impactos de piedra.', precio: 9200.00, nombre_categoria: 'Protección Cerámica & PPF', imagen_url: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=800&q=80' },
+    { id: 6, nombre: 'Descontaminación y Sellado de Rines', descripcion: 'Tratamiento térmico para repeler polvo de balatas.', precio: 1200.00, nombre_categoria: 'Tratamientos Especiales Rines & Cristales', imagen_url: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=800&q=80' }
   ]);
   
   const [categorias, setCategorias] = useState([
@@ -108,39 +108,33 @@ function App() {
       if (rPromo.success && rPromo.promociones?.length) setPromociones(rPromo.promociones);
       if (rPedidos.success) setPedidosClientes(rPedidos.pedidos || []);
     } catch (err) {
-      console.log('Modo local activo');
+      console.error('Error conectando con la API:', err);
     }
   };
 
   const obtenerEstadoTiempoCita = (fechaStr, horaStr) => {
-    if (!fechaStr) return { texto: 'Programada', color: '#34d399', bg: 'rgba(16, 185, 129, 0.15)' };
-    
+    if (!fechaStr) return { texto: 'Programada', color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.1)' };
     const fechaLimpia = String(fechaStr).split('T')[0];
     const horaLimpia = horaStr ? String(horaStr).slice(0, 5) : '00:00';
     const fechaCita = new Date(`${fechaLimpia}T${horaLimpia}:00`);
     const ahora = new Date();
-
     const diffMs = fechaCita - ahora;
     const diffHoras = diffMs / (1000 * 60 * 60);
 
-    if (diffHoras < -2) {
-      return { texto: '⚪ Fecha Pasada', color: '#94a3b8', bg: 'rgba(148, 163, 184, 0.15)' };
+    if (diffHoras < 0 && diffHoras > -3) {
+      return { texto: '🔴 EN CURSO AHORA', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.15)' };
+    } else if (diffHoras <= 24 && diffHoras >= 0) {
+      return { texto: '⚡ PROGRAMADA HOY', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)' };
+    } else if (diffHoras < -3) {
+      return { texto: '✅ ATENDIDA / PASADA', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' };
+    } else {
+      const dias = Math.ceil(diffHoras / 24);
+      return { texto: `📅 Faltan ${dias} días`, color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.1)' };
     }
-    if (diffHoras <= 24) {
-      if (diffHoras <= 3 && diffHoras >= -2) {
-        return { texto: '🔴 ¡EN CURSO / MUY PRONTO!', color: '#f87171', bg: 'rgba(239, 68, 68, 0.2)' };
-      }
-      return { texto: '🟠 ¡ES HOY / MENOS DE 24H!', color: '#fbbf24', bg: 'rgba(245, 158, 11, 0.2)' };
-    }
-    const dias = Math.ceil(diffHoras / 24);
-    if (dias <= 3) {
-      return { texto: `🟡 En ${dias} días`, color: '#facc15', bg: 'rgba(250, 204, 21, 0.15)' };
-    }
-    return { texto: `🟢 En ${dias} días`, color: '#34d399', bg: 'rgba(16, 185, 129, 0.15)' };
   };
 
   const eliminarCitaAtendida = async (id) => {
-    if (!window.confirm('¿Confirmar que esta cita ya fue atendida y eliminarla de la lista?')) return;
+    if (!window.confirm('¿Desea eliminar esta cita del registro?')) return;
     try {
       await fetch(`${API_URL}/api/citas/${id}`, { method: 'DELETE' });
       cargarTodo();
@@ -150,7 +144,7 @@ function App() {
   };
 
   const eliminarPedidoEntregado = async (id) => {
-    if (!window.confirm('¿Confirmar que este pedido ya fue entregado y eliminarlo?')) return;
+    if (!window.confirm('¿Desea eliminar este pedido del historial?')) return;
     try {
       await fetch(`${API_URL}/api/pedidos_productos/${id}`, { method: 'DELETE' });
       cargarTodo();
@@ -162,55 +156,46 @@ function App() {
   const seleccionarServicioParaCita = (nombreServicio) => {
     setCServ(nombreServicio);
     setTab('citas');
-    window.scrollTo({ top: 300, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // 🛡️ VALIDACIÓN DE STOCK AL AGREGAR AL CARRITO
   const agregarAlCarrito = (producto) => {
-    setCarrito((prev) => {
+    setCarrito(prev => {
       const existe = prev.find((item) => item.id === producto.id);
       const cantidadActual = existe ? existe.cantidad : 0;
-
       if (cantidadActual + 1 > producto.stock) {
-        alert(`¡Stock máximo alcanzado! Solo hay ${producto.stock} unidades disponibles de "${producto.nombre_producto}".`);
+        alert('Stock máximo alcanzado para este producto.');
         return prev;
       }
-
       if (existe) {
         return prev.map((item) =>
           item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item
         );
+      } else {
+        return [...prev, { ...producto, cantidad: 1 }];
       }
-      return [...prev, { ...producto, cantidad: 1 }];
     });
   };
 
   const quitarDelCarrito = (id) => {
-    setCarrito((prev) => prev.filter((item) => item.id !== id));
+    setCarrito(prev => prev.filter((item) => item.id !== id));
   };
 
-  // 🛡️ VALIDACIÓN DE STOCK AL USAR LOS BOTONES + Y - EN EL CARRITO
   const cambiarCantidadCarrito = (id, delta) => {
-    setCarrito((prev) =>
-      prev
-        .map((item) => {
-          if (item.id === id) {
-            const nuevaCant = item.cantidad + delta;
-            
-            // Buscar el producto en el inventario actual para verificar su stock real
-            const productoOriginal = inventario.find(p => p.id === id);
-            const stockMaximo = productoOriginal ? productoOriginal.stock : item.stock;
-
-            if (nuevaCant > stockMaximo) {
-              alert(`¡No puedes agregar más! El stock máximo disponible es de ${stockMaximo} unidades.`);
-              return item; // Bloquea el incremento si supera el stock
-            }
-
-            return nuevaCant > 0 ? { ...item, cantidad: nuevaCant } : null;
+    setCarrito(prev =>
+      prev.map((item) => {
+        if (item.id === id) {
+          const nuevaCant = item.cantidad + delta;
+          const productoOriginal = inventario.find(p => p.id === id);
+          const stockMaximo = productoOriginal ? productoOriginal.stock : 999;
+          if (nuevaCant > stockMaximo) {
+            alert('No hay más stock disponible.');
+            return item;
           }
-          return item;
-        })
-        .filter(Boolean)
+          return nuevaCant > 0 ? { ...item, cantidad: nuevaCant } : null;
+        }
+        return item;
+      }).filter(Boolean)
     );
   };
 
@@ -224,9 +209,8 @@ function App() {
   const confirmarPedidoCarrito = async (e) => {
     e.preventDefault();
     if (carrito.length === 0) return;
-
     const resumenProductos = carrito
-      .map((item) => `${item.cantidad}x ${item.nombre_producto}`)
+      .map((i) => `${i.cantidad}x ${i.nombre_producto}`)
       .join(', ');
 
     try {
@@ -242,31 +226,25 @@ function App() {
       });
       const data = await res.json();
       if (data.success) {
-        setShowCarritoModal(false);
+        setMensajeCompra('¡Pedido realizado con éxito! Nos pondremos en contacto contigo.');
         setCarrito([]);
         setCompraNombre('');
         setCompraTel('');
-        setMensajeCompra('¡Pedido enviado con éxito! El administrador ha recibido tu lista de productos.');
-        setTimeout(() => setMensajeCompra(''), 6000);
-        cargarTodo();
+        setTimeout(() => {
+          setMensajeCompra('');
+          setShowCarritoModal(false);
+          cargarTodo();
+        }, 3500);
       }
     } catch (err) {
-      setPedidosClientes((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          nombre_cliente: compraNombre,
-          telefono: compraTel,
-          nombre_producto: resumenProductos,
-          precio: totalCarrito
-        }
-      ]);
-      setShowCarritoModal(false);
+      setMensajeCompra('¡Pedido simulado con éxito! (Sin conexión a BD)');
       setCarrito([]);
       setCompraNombre('');
       setCompraTel('');
-      setMensajeCompra('¡Pedido enviado con éxito!');
-      setTimeout(() => setMensajeCompra(''), 6000);
+      setTimeout(() => {
+        setMensajeCompra('');
+        setShowCarritoModal(false);
+      }, 3500);
     }
   };
 
@@ -279,24 +257,28 @@ function App() {
         body: JSON.stringify({
           nombre_cliente: cCliente,
           telefono: cTel,
-          servicio_solicitado: cServ,
+          servicio_solicitado: cServ || 'Lavado General',
           fecha_cita: cFecha,
-          hora_cita: cHora.length === 5 ? cHora + ':00' : cHora,
-          estado: 'Confirmada'
+          hora_cita: cHora,
+          estado: 'Pendiente',
+          observaciones: 'Agendado desde la web'
         })
       });
       const data = await res.json();
       if (data.success) {
-        setCCliente(''); setCTel(''); setCServ(''); setCFecha(''); setCHora('');
         setCitaExito(true);
-        setTimeout(() => setCitaExito(false), 5000);
+        setCCliente(''); setCTel(''); setCServ(''); setCFecha(''); setCHora('');
+        setTimeout(() => setCitaExito(false), 4000);
         cargarTodo();
       }
     } catch (err) {
-      setCitas(prev => [...prev, { id: Date.now(), nombre_cliente: cCliente, telefono: cTel, servicio_solicitado: cServ, fecha_cita: cFecha, hora_cita: cHora, estado: 'Confirmada' }]);
-      setCCliente(''); setCTel(''); setCServ(''); setCFecha(''); setCHora('');
+      setCitas(prev => [
+        { id: Date.now(), nombre_cliente: cCliente, telefono: cTel, servicio_solicitado: cServ, fecha_cita: cFecha, hora_cita: cHora, estado: 'Pendiente' },
+        ...prev
+      ]);
       setCitaExito(true);
-      setTimeout(() => setCitaExito(false), 5000);
+      setCCliente(''); setCTel(''); setCServ(''); setCFecha(''); setCHora('');
+      setTimeout(() => setCitaExito(false), 4000);
     }
   };
 
@@ -344,7 +326,8 @@ function App() {
           nombre: servicioEditando.nombre,
           descripcion: servicioEditando.descripcion,
           precio: Number(servicioEditando.precio),
-          categoria_id: Number(servicioEditando.categoria_id || 1)
+          categoria_id: Number(servicioEditando.categoria_id || 1),
+          imagen_url: servicioEditando.imagen_url
         })
       });
       const data = await res.json();
@@ -361,12 +344,16 @@ function App() {
   };
 
   const eliminarServicioAdmin = async (id) => {
-    if (!window.confirm('¿Desea eliminar este servicio?')) return;
+    if (!window.confirm('¿Desea ocultar/eliminar este servicio del catálogo?')) return;
     try {
-      await fetch(`${API_URL}/api/servicios/${id}`, { method: 'DELETE' });
-      cargarTodo();
+      const res = await fetch(`${API_URL}/api/servicios/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        setServicios(prev => prev.filter(s => s.id !== id));
+        cargarTodo();
+      }
     } catch (err) {
-      setServicios(servicios.filter(s => s.id !== id));
+      setServicios(prev => prev.filter(s => s.id !== id));
     }
   };
 
@@ -428,12 +415,16 @@ function App() {
   };
 
   const eliminarProductoAdmin = async (id) => {
-    if (!window.confirm('¿Desea eliminar este producto de la tienda?')) return;
+    if (!window.confirm('¿Desea ocultar/eliminar este producto de la tienda?')) return;
     try {
-      await fetch(`${API_URL}/api/inventario/${id}`, { method: 'DELETE' });
-      cargarTodo();
+      const res = await fetch(`${API_URL}/api/inventario/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        setInventario(prev => prev.filter(i => i.id !== id));
+        cargarTodo();
+      }
     } catch (err) {
-      setInventario(inventario.filter(i => i.id !== id));
+      setInventario(prev => prev.filter(i => i.id !== id));
     }
   };
 
@@ -487,353 +478,133 @@ function App() {
   }).length;
 
   return (
-    <div style={{ backgroundColor: '#07090e', color: '#f1f5f9', minHeight: '100vh', fontFamily: 'Segoe UI, system-ui, sans-serif' }}>
+    <div style={{ backgroundColor: '#090b10', color: '#f1f5f9', minHeight: '100vh', fontFamily: 'Segoe UI, system-ui, sans-serif' }}>
       
-      {/* HEADER */}
-      <header style={{ backgroundColor: 'rgba(10, 13, 20, 0.95)', backdropFilter: 'blur(12px)', padding: '1.1rem 2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #1a2233', position: 'sticky', top: 0, zIndex: 50, flexWrap: 'wrap', gap: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => { if(!isAdmin) setTab('servicios'); }}>
-          <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'linear-gradient(135deg, #d4af37, #aa7c11)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2rem', color: '#07090e', boxShadow: '0 0 15px rgba(212, 175, 55, 0.3)' }}>⚡</div>
+      {/* NAVBAR */}
+      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.2rem 3rem', backgroundColor: '#111520', borderBottom: '1px solid #1e2638', position: 'sticky', top: 0, zIndex: 1000 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', cursor: 'pointer' }} onClick={() => setTab('servicios')}>
+          <span style={{ fontSize: '1.8rem' }}>🏎️</span>
           <div>
-            <h1 style={{ color: '#ffffff', fontSize: '1.35rem', margin: 0, fontWeight: 800, letterSpacing: '1px' }}>
-              NEXUS <span style={{ color: '#d4af37' }}>DETAIL</span>
-            </h1>
-            <p style={{ margin: 0, fontSize: '0.68rem', color: '#94a3b8', letterSpacing: '1px' }}>LUXURY AUTOMOTIVE STUDIO</p>
+            <h1 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, color: '#06b6d4', letterSpacing: '1px' }}>APEX MOTORS</h1>
+            <span style={{ fontSize: '0.75rem', color: '#94a3b8', letterSpacing: '2px' }}>STUDIO & DETAILING</span>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', flexWrap: 'wrap' }}>
-          {!isAdmin && (
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          {[
+            { id: 'servicios', label: 'Servicios' },
+            { id: 'citas', label: 'Agendar Cita' },
+            { id: 'inventario', label: 'Tienda Pro' },
+            { id: 'empleados', label: 'Equipo' },
+            { id: 'promociones', label: 'Promociones' },
+            ...(isAdmin ? [{ id: 'admin', label: '⚙️ Panel Admin' }] : [])
+          ].map(t => (
             <button
-              onClick={() => setShowCarritoModal(true)}
-              style={{ backgroundColor: '#12151c', color: '#f8fafc', border: '1px solid #2a3447', padding: '0.6rem 1.1rem', borderRadius: '6px', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              style={{
+                background: tab === t.id ? '#1e2638' : 'transparent',
+                color: tab === t.id ? '#06b6d4' : '#cbd5e1',
+                border: tab === t.id ? '1px solid #06b6d4' : '1px solid transparent',
+                padding: '0.5rem 1rem',
+                borderRadius: '8px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
             >
-              🛒 Carrito
-              {totalArticulosCarrito > 0 && (
-                <span style={{ backgroundColor: '#d4af37', color: '#07090e', borderRadius: '50%', padding: '0.1rem 0.5rem', fontSize: '0.75rem', fontWeight: 900 }}>
-                  {totalArticulosCarrito}
-                </span>
-              )}
+              {t.label} {t.id === 'admin' && citasUrgentesCount > 0 && `(${citasUrgentesCount})`}
             </button>
-          )}
+          ))}
+
+          {/* Botón Carrito */}
+          <button
+            onClick={() => setShowCarritoModal(true)}
+            style={{
+              background: '#06b6d4',
+              color: '#090b10',
+              border: 'none',
+              padding: '0.5rem 1rem',
+              borderRadius: '8px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            🛒 Carrito ({totalArticulosCarrito})
+          </button>
 
           {isAdmin ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ backgroundColor: 'rgba(212, 175, 55, 0.2)', color: '#d4af37', padding: '0.4rem 0.9rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, border: '1px solid #d4af37' }}>
-                👑 Modo Administrador Activo
-              </span>
-              <button 
-                onClick={() => { setIsAdmin(false); setTab('servicios'); }}
-                style={{ backgroundColor: '#1a2233', color: '#f8fafc', border: '1px solid #2a3447', padding: '0.5rem 1rem', borderRadius: '6px', fontWeight: 600, cursor: 'pointer', fontSize: '0.8rem' }}
-              >
-                Salir Admin
-              </button>
-            </div>
+            <button
+              onClick={() => { setIsAdmin(false); setTab('servicios'); }}
+              style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
+            >
+              Cerrar Sesión
+            </button>
           ) : (
             <button
               onClick={() => setShowLoginModal(true)}
-              style={{ backgroundColor: '#12151c', color: '#d4af37', border: '1px solid #d4af37', padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem' }}
+              style={{ background: 'transparent', color: '#06b6d4', border: '1px solid #06b6d4', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
             >
-              🔒 Administración
-            </button>
-          )}
-
-          {!isAdmin && (
-            <button
-              onClick={() => setTab('citas')}
-              style={{ background: 'linear-gradient(135deg, #d4af37, #aa7c11)', color: '#07090e', border: 'none', padding: '0.6rem 1.3rem', borderRadius: '6px', fontWeight: 800, cursor: 'pointer', fontSize: '0.85rem' }}
-            >
-              📅 RESERVAR TURNO
+              Admin Login
             </button>
           )}
         </div>
-      </header>
+      </nav>
 
-      {/* MODAL LOGIN */}
-      {showLoginModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(7, 9, 14, 0.85)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100 }}>
-          <div style={{ backgroundColor: '#12151c', padding: '2.5rem', borderRadius: '12px', border: '1px solid #d4af37', width: '100%', maxWidth: '400px', boxShadow: '0 15px 35px rgba(0,0,0,0.7)' }}>
-            <h3 style={{ color: '#d4af37', marginTop: 0, marginBottom: '0.5rem', fontSize: '1.4rem' }}>Acceso Administrativo</h3>
-            <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '1.5rem' }}>Ingrese sus credenciales de acceso al sistema.</p>
-            
-            {loginError && (
-              <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', padding: '0.8rem', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.85rem', border: '1px solid #ef4444' }}>
-                Usuario o contraseña incorrectos.
-              </div>
-            )}
+      {/* CONTENIDO PRINCIPAL */}
+      <div style={{ maxWidth: '1200px', margin: '2rem auto', padding: '0 1.5rem' }}>
 
-            <form onSubmit={handleLogin}>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Usuario</label>
-                <input type="text" value={userAdmin} onChange={(e) => setUserAdmin(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Contraseña</label>
-                <input type="password" value={passAdmin} onChange={(e) => setPassAdmin(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button type="submit" style={{ flex: 1, padding: '0.8rem', backgroundColor: '#d4af37', color: '#07090e', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>
-                  INGRESAR
-                </button>
-                <button type="button" onClick={() => setShowLoginModal(false)} style={{ flex: 1, padding: '0.8rem', backgroundColor: '#1a2233', color: '#f8fafc', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
-                  CANCELAR
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL CARRITO DE COMPRAS */}
-      {showCarritoModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(7, 9, 14, 0.85)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100, padding: '1rem' }}>
-          <div style={{ backgroundColor: '#12151c', padding: '2rem', borderRadius: '12px', border: '1px solid #d4af37', width: '100%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 15px 35px rgba(0,0,0,0.8)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', borderBottom: '1px solid #1a2233', paddingBottom: '0.8rem' }}>
-              <h3 style={{ color: '#d4af37', margin: 0, fontSize: '1.35rem' }}>🛒 Tu Carrito de Compras</h3>
-              <button onClick={() => setShowCarritoModal(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: '1.3rem', cursor: 'pointer' }}>✖</button>
-            </div>
-
-            {carrito.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#94a3b8' }}>
-                <p style={{ fontSize: '1rem', marginBottom: '1rem' }}>Aún no has agregado productos a tu carrito.</p>
-                <button onClick={() => { setShowCarritoModal(false); setTab('inventario'); }} style={{ backgroundColor: '#d4af37', color: '#07090e', border: 'none', padding: '0.7rem 1.4rem', borderRadius: '6px', fontWeight: 800, cursor: 'pointer' }}>
-                  Ir a la Tienda
-                </button>
-              </div>
-            ) : (
-              <div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '1.5rem' }}>
-                  {carrito.map((item) => (
-                    <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#07090e', padding: '0.8rem 1rem', borderRadius: '8px', border: '1px solid #1a2233' }}>
-                      <div style={{ flex: 1 }}>
-                        <p style={{ margin: 0, color: '#fff', fontWeight: 700, fontSize: '0.9rem' }}>{item.nombre_producto}</p>
-                        <span style={{ color: '#d4af37', fontSize: '0.82rem', fontWeight: 700 }}>${Number(item.precio_unitario).toLocaleString('es-MX')} c/u</span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <button onClick={() => cambiarCantidadCarrito(item.id, -1)} style={{ backgroundColor: '#1a2233', color: '#fff', border: 'none', width: '26px', height: '26px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>-</button>
-                        <span style={{ color: '#fff', fontWeight: 700, minWidth: '20px', textAlign: 'center' }}>{item.cantidad}</span>
-                        <button onClick={() => cambiarCantidadCarrito(item.id, 1)} style={{ backgroundColor: '#1a2233', color: '#fff', border: 'none', width: '26px', height: '26px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+</button>
-                        <button onClick={() => quitarDelCarrito(item.id)} style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: 'none', padding: '0.3rem 0.5rem', borderRadius: '4px', cursor: 'pointer', marginLeft: '4px' }}>🗑️</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#0a0d14', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', border: '1px solid #1a2233' }}>
-                  <span style={{ color: '#cbd5e1', fontWeight: 700 }}>Total a Pagar:</span>
-                  <strong style={{ color: '#d4af37', fontSize: '1.4rem', fontWeight: 900 }}>${totalCarrito.toLocaleString('es-MX')} MXN</strong>
-                </div>
-
-                <form onSubmit={confirmarPedidoCarrito}>
-                  <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Tu Nombre Completo</label>
-                    <input type="text" value={compraNombre} onChange={(e) => setCompraNombre(e.target.value)} required placeholder="Escribe tu nombre" style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                  </div>
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Teléfono / Celular</label>
-                    <input type="text" value={compraTel} onChange={(e) => setCompraTel(e.target.value)} required placeholder="Escribe tu teléfono" style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                  </div>
-                  <button type="submit" style={{ width: '100%', padding: '0.9rem', backgroundColor: '#d4af37', color: '#07090e', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer', fontSize: '0.95rem' }}>
-                    CONFIRMAR Y ENVIAR PEDIDO
-                  </button>
-                </form>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* MODAL EDITAR SERVICIO (ADMIN) */}
-      {servicioEditando && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(7, 9, 14, 0.85)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100, padding: '1rem' }}>
-          <div style={{ backgroundColor: '#12151c', padding: '2.5rem', borderRadius: '12px', border: '1px solid #d4af37', width: '100%', maxWidth: '450px' }}>
-            <h3 style={{ color: '#d4af37', marginTop: 0, marginBottom: '1.2rem', fontSize: '1.35rem' }}>✏️ Editar Servicio</h3>
-            <form onSubmit={guardarEdicionServicio}>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Nombre del Servicio</label>
-                <input type="text" value={servicioEditando.nombre} onChange={(e) => setServicioEditando({ ...servicioEditando, nombre: e.target.value })} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Descripción</label>
-                <input type="text" value={servicioEditando.descripcion} onChange={(e) => setServicioEditando({ ...servicioEditando, descripcion: e.target.value })} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Precio ($ MXN)</label>
-                <input type="number" value={servicioEditando.precio} onChange={(e) => setServicioEditando({ ...servicioEditando, precio: e.target.value })} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Categoría</label>
-                <select value={servicioEditando.categoria_id} onChange={(e) => setServicioEditando({ ...servicioEditando, categoria_id: e.target.value })} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white' }}>
-                  {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre_categoria}</option>)}
-                </select>
-              </div>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button type="submit" style={{ flex: 1, padding: '0.8rem', backgroundColor: '#d4af37', color: '#07090e', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>
-                  GUARDAR CAMBIOS
-                </button>
-                <button type="button" onClick={() => setServicioEditando(null)} style={{ flex: 1, padding: '0.8rem', backgroundColor: '#1a2233', color: '#f8fafc', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
-                  CANCELAR
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL EDITAR PRODUCTO (ADMIN) */}
-      {productoEditando && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(7, 9, 14, 0.85)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100, padding: '1rem' }}>
-          <div style={{ backgroundColor: '#12151c', padding: '2.5rem', borderRadius: '12px', border: '1px solid #d4af37', width: '100%', maxWidth: '450px' }}>
-            <h3 style={{ color: '#d4af37', marginTop: 0, marginBottom: '1.2rem', fontSize: '1.35rem' }}>✏️ Editar Producto</h3>
-            <form onSubmit={guardarEdicionProducto}>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Nombre del Producto</label>
-                <input type="text" value={productoEditando.nombre_producto} onChange={(e) => setProductoEditando({ ...productoEditando, nombre_producto: e.target.value })} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Categoría</label>
-                <select value={productoEditando.categoria_insumo} onChange={(e) => setProductoEditando({ ...productoEditando, categoria_insumo: e.target.value })} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white' }}>
-                  <option value="Químicos">Químicos</option>
-                  <option value="Accesorios">Accesorios</option>
-                  <option value="Herramientas">Herramientas</option>
-                </select>
-              </div>
-              <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Stock</label>
-                  <input type="number" value={productoEditando.stock} onChange={(e) => setProductoEditando({ ...productoEditando, stock: e.target.value })} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Precio ($ MXN)</label>
-                  <input type="number" value={productoEditando.precio_unitario} onChange={(e) => setProductoEditando({ ...productoEditando, precio_unitario: e.target.value })} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                </div>
-              </div>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Proveedor</label>
-                <input type="text" value={productoEditando.proveedor} onChange={(e) => setProductoEditando({ ...productoEditando, proveedor: e.target.value })} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button type="submit" style={{ flex: 1, padding: '0.8rem', backgroundColor: '#d4af37', color: '#07090e', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>
-                  GUARDAR CAMBIOS
-                </button>
-                <button type="button" onClick={() => setProductoEditando(null)} style={{ flex: 1, padding: '0.8rem', backgroundColor: '#1a2233', color: '#f8fafc', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
-                  CANCELAR
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* HERO BANNER (PÚBLICO) */}
-      {!isAdmin && (
-        <div style={{
-          position: 'relative',
-          backgroundImage: 'linear-gradient(to right, rgba(7, 9, 14, 0.97) 40%, rgba(7, 9, 14, 0.6) 100%), url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=85")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          borderBottom: '1px solid #1a2233',
-          padding: '5rem 2rem'
-        }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <span style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', border: '1px solid rgba(212, 175, 55, 0.4)', color: '#d4af37', padding: '0.35rem 0.9rem', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase' }}>
-              ◆ Alta Exclusividad & Precisión
-            </span>
-            <h2 style={{ color: '#ffffff', fontSize: '2.8rem', fontWeight: 800, margin: '1rem 0 0.8rem', maxWidth: '650px', lineHeight: '1.15' }}>
-              El Arte del Detailing y <span style={{ color: '#d4af37' }}>Protección Suprema</span>
-            </h2>
-            <p style={{ color: '#94a3b8', fontSize: '1.02rem', margin: '0 0 1.8rem', maxWidth: '540px', lineHeight: '1.6' }}>
-              Tratamientos de alta gama diseñados para preservar, restaurar y realzar la perfección estética de su vehículo.
-            </p>
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              <button onClick={() => setTab('servicios')} style={{ backgroundColor: '#d4af37', color: '#07090e', border: 'none', padding: '0.85rem 1.6rem', borderRadius: '6px', fontWeight: 800, cursor: 'pointer', fontSize: '0.9rem' }}>
-                Ver Servicios Exclusivos
-              </button>
-              <button onClick={() => setTab('inventario')} style={{ backgroundColor: 'rgba(18, 21, 28, 0.9)', color: '#f8fafc', border: '1px solid #2a3447', padding: '0.85rem 1.6rem', borderRadius: '6px', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}>
-                Explorar Tienda
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <main style={{ maxWidth: '1200px', margin: '2.5rem auto', padding: '0 1.5rem' }}>
-
-        {/* NAVEGACIÓN PÚBLICA */}
-        {!isAdmin && (
-          <nav style={{ display: 'flex', gap: '0.75rem', marginBottom: '2.5rem', borderBottom: '1px solid #1a2233', paddingBottom: '1.2rem', flexWrap: 'wrap' }}>
-            {[
-              { id: 'servicios', label: '🚗 Servicios & Tratamientos' },
-              { id: 'citas', label: '📅 Reservación en Línea' },
-              { id: 'inventario', label: '🧴 Tienda & Insumos' },
-              { id: 'empleados', label: '👨‍🔧 Maestros Detalers' },
-              { id: 'promociones', label: '✨ Promociones y Paquetes' }
-            ].map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
-                style={{
-                  padding: '0.8rem 1.4rem',
-                  backgroundColor: tab === t.id ? '#12151c' : '#0a0d14',
-                  color: tab === t.id ? '#d4af37' : '#94a3b8',
-                  border: tab === t.id ? '1px solid #d4af37' : '1px solid #1a2233',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: 700,
-                  fontSize: '0.88rem',
-                  boxShadow: tab === t.id ? '0 4px 15px rgba(212, 175, 55, 0.15)' : 'none',
-                  transition: '0.2s'
-                }}
-              >
-                {t.label}
-              </button>
-            ))}
-          </nav>
-        )}
-
-        {/* ================= VISTA USUARIO: SERVICIOS ================= */}
+        {/* 1. SERVICIOS */}
         {!isAdmin && tab === 'servicios' && (
           <div>
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-              <input
-                type="text"
-                placeholder="Buscar servicio..."
-                value={busquedaServicio}
-                onChange={(e) => setBusquedaServicio(e.target.value)}
-                style={{ flex: 1, minWidth: '260px', padding: '0.85rem 1.2rem', borderRadius: '8px', border: '1px solid #1a2233', backgroundColor: '#12151c', color: 'white', fontSize: '0.95rem' }}
-              />
-              <select
-                value={filtroCategoria}
-                onChange={(e) => setFiltroCategoria(e.target.value)}
-                style={{ padding: '0.85rem 1.2rem', borderRadius: '8px', border: '1px solid #1a2233', backgroundColor: '#12151c', color: 'white', cursor: 'pointer', fontSize: '0.95rem' }}
-              >
-                <option value="Todas">Todas las categorías</option>
-                {categorias.map(c => (
-                  <option key={c.id} value={c.nombre_categoria}>{c.nombre_categoria}</option>
-                ))}
-              </select>
+            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+              <h2 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff', marginBottom: '0.5rem' }}>EXCELENCIA EN CUIDADO AUTOMOTRIZ</h2>
+              <p style={{ color: '#94a3b8', fontSize: '1.1rem' }}>Tratamientos cerámicos, corrección de pintura y detailing de competencia para vehículos exclusivos.</p>
+              
+              {/* Buscador y Filtros */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+                <input
+                  type="text"
+                  placeholder="Buscar servicio o tratamiento..."
+                  value={busquedaServicio}
+                  onChange={(e) => setBusquedaServicio(e.target.value)}
+                  style={{ padding: '0.7rem 1rem', width: '300px', backgroundColor: '#111520', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none' }}
+                />
+                <select
+                  value={filtroCategoria}
+                  onChange={(e) => setFiltroCategoria(e.target.value)}
+                  style={{ padding: '0.7rem 1rem', backgroundColor: '#111520', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none' }}
+                >
+                  <option value="Todas">Todas las Categorías</option>
+                  {categorias.map(cat => (
+                    <option key={cat.id} value={cat.nombre_categoria}>{cat.nombre_categoria}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: '1.8rem' }}>
-              {serviciosFiltrados.map((s) => (
-                <div key={s.id} style={{ backgroundColor: '#12151c', borderRadius: '12px', overflow: 'hidden', border: '1px solid #1a2233', display: 'flex', flexDirection: 'column', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
-                  <div style={{ position: 'relative', height: '190px', backgroundColor: '#07090e' }}>
-                    <img src={s.imagen_url || 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=800&q=80'} alt={s.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <span style={{ position: 'absolute', top: '12px', left: '12px', fontSize: '0.68rem', color: '#07090e', textTransform: 'uppercase', fontWeight: 800, backgroundColor: '#d4af37', padding: '0.3rem 0.7rem', borderRadius: '4px' }}>
-                      {s.nombre_categoria || 'Exclusivo'}
-                    </span>
-                  </div>
-                  <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '2rem' }}>
+              {serviciosFiltrados.map(s => (
+                <div key={s.id} style={{ backgroundColor: '#111520', borderRadius: '12px', border: '1px solid #1e2638', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'transform 0.3s' }}>
+                  <img src={s.imagen_url || 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=800&q=80'} alt={s.nombre} style={{ height: '200px', width: '100%', objectFit: 'cover' }} />
+                  <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
                     <div>
-                      <h3 style={{ margin: '0 0 0.5rem', color: '#ffffff', fontSize: '1.15rem', fontWeight: 700 }}>{s.nombre}</h3>
-                      <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '0 0 1.4rem', lineHeight: '1.5' }}>{s.descripcion}</p>
+                      <span style={{ fontSize: '0.75rem', backgroundColor: 'rgba(6, 182, 212, 0.1)', color: '#06b6d4', padding: '0.3rem 0.6rem', borderRadius: '4px', fontWeight: 700 }}>
+                        {s.nombre_categoria || 'Detailing Profesional'}
+                      </span>
+                      <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0.8rem 0 0.5rem 0', color: '#fff' }}>{s.nombre}</h3>
+                      <p style={{ color: '#94a3b8', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '1rem' }}>{s.descripcion}</p>
                     </div>
-                    <div>
-                      <div style={{ borderTop: '1px solid #1a2233', paddingTop: '0.9rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                        <span style={{ fontSize: '0.78rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Inversión</span>
-                        <strong style={{ color: '#d4af37', fontSize: '1.3rem', fontWeight: 800 }}>${Number(s.precio).toLocaleString('es-MX')}</strong>
-                      </div>
-                      <button onClick={() => seleccionarServicioParaCita(s.nombre)} style={{ width: '100%', padding: '0.75rem', backgroundColor: '#1a2233', color: '#ffffff', border: '1px solid #2a3447', borderRadius: '6px', cursor: 'pointer', fontWeight: 700 }}>
-                        Seleccionar Tratamiento →
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', borderTop: '1px solid #1e2638', paddingTop: '1rem' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#06b6d4' }}>${Number(s.precio).toLocaleString('es-MX')}</span>
+                      <button
+                        onClick={() => seleccionarServicioParaCita(s.nombre)}
+                        style={{ backgroundColor: '#06b6d4', color: '#090b10', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+                      >
+                        Agendar Cita ⚡
                       </button>
                     </div>
                   </div>
@@ -843,406 +614,390 @@ function App() {
           </div>
         )}
 
-        {/* ================= VISTA USUARIO: CITAS ================= */}
+        {/* 2. CITAS */}
         {!isAdmin && tab === 'citas' && (
-          <div style={{ maxWidth: '650px', margin: '0 auto' }}>
-            <div style={{ backgroundColor: '#12151c', padding: '2.5rem', borderRadius: '12px', border: '1px solid #1a2233' }}>
-              <h3 style={{ color: '#d4af37', marginTop: 0, marginBottom: '0.4rem', fontSize: '1.4rem' }}>📅 Agendar Cita en el Estudio</h3>
-              <p style={{ color: '#94a3b8', fontSize: '0.88rem', marginTop: 0, marginBottom: '1.8rem' }}>Seleccione su servicio preferido y reserve su espacio de alta gama.</p>
-              
-              {citaExito && (
-                <div style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#d4af37', padding: '1.1rem', borderRadius: '8px', marginBottom: '1.5rem', textAlign: 'center', fontWeight: 700, border: '1px solid #d4af37' }}>
-                  ✦ ¡Cita agendada con éxito! Le esperamos en el estudio.
-                </div>
-              )}
+          <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: '#111520', padding: '2.5rem', borderRadius: '12px', border: '1px solid #1e2638' }}>
+            <h2 style={{ color: '#06b6d4', fontSize: '2rem', fontWeight: 800, textAlign: 'center', marginBottom: '0.5rem' }}>Agendar Tratamiento</h2>
+            <p style={{ color: '#94a3b8', textAlign: 'center', marginBottom: '2rem' }}>Reserva tu espacio en nuestro estudio especializado.</p>
 
-              <form onSubmit={guardarCita}>
-                <div style={{ marginBottom: '1.2rem' }}>
-                  <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Nombre del Cliente</label>
-                  <input type="text" value={cCliente} onChange={(e) => setCCliente(e.target.value)} required placeholder="Escriba su nombre" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
+            {citaExito && (
+              <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', border: '1px solid #10b981', color: '#10b981', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', textAlign: 'center', fontWeight: 600 }}>
+                ¡Cita agendada correctamente! Nos pondremos en contacto contigo a la brevedad.
+              </div>
+            )}
+
+            <form onSubmit={guardarCita} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Nombre Completo:</label>
+                <input type="text" required value={cCliente} onChange={e => setCCliente(e.target.value)} placeholder="Ej. Carlos Slim" style={{ width: '100%', padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Teléfono de Contacto:</label>
+                <input type="tel" required value={cTel} onChange={e => setCTel(e.target.value)} placeholder="Ej. 5512345678" style={{ width: '100%', padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Servicio Requerido:</label>
+                <select value={cServ} onChange={e => setCServ(e.target.value)} required style={{ width: '100%', padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none' }}>
+                  <option value="">Selecciona un servicio...</option>
+                  {servicios.map(s => (
+                    <option key={s.id} value={s.nombre}>{s.nombre} (${s.precio})</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Fecha:</label>
+                  <input type="date" required value={cFecha} onChange={e => setCFecha(e.target.value)} style={{ width: '100%', padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none' }} />
                 </div>
-                <div style={{ marginBottom: '1.2rem' }}>
-                  <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Teléfono / Celular</label>
-                  <input type="text" value={cTel} onChange={(e) => setCTel(e.target.value)} required placeholder="Escriba su número" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Hora:</label>
+                  <input type="time" required value={cHora} onChange={e => setCHora(e.target.value)} style={{ width: '100%', padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none' }} />
                 </div>
-                <div style={{ marginBottom: '1.2rem' }}>
-                  <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Tratamiento Requerido</label>
-                  <select value={cServ} onChange={(e) => setCServ(e.target.value)} required style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white' }}>
-                    <option value="">-- Seleccionar tratamiento --</option>
-                    {servicios.map((s, idx) => (
-                      <option key={s.id || idx} value={s.nombre}>{s.nombre} — ${Number(s.precio).toLocaleString('es-MX')}</option>
-                    ))}
-                  </select>
-                </div>
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.8rem' }}>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Fecha</label>
-                    <input type="date" value={cFecha} onChange={(e) => setCFecha(e.target.value)} required style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
+              </div>
+              <button type="submit" style={{ backgroundColor: '#06b6d4', color: '#090b10', border: 'none', padding: '1rem', borderRadius: '8px', fontWeight: 800, fontSize: '1.1rem', cursor: 'pointer', marginTop: '1rem' }}>
+                Confirmar Reserva
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* 3. TIENDA / INVENTARIO */}
+        {!isAdmin && tab === 'inventario' && (
+          <div>
+            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+              <h2 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff', marginBottom: '0.5rem' }}>TIENDA & QUÍMICOS PROFESIONALES</h2>
+              <p style={{ color: '#94a3b8', fontSize: '1.1rem' }}>Productos de detailing de gama alta para mantenimiento en casa.</p>
+              
+              <input
+                type="text"
+                placeholder="Buscar productos en tienda..."
+                value={busquedaProducto}
+                onChange={(e) => setBusquedaProducto(e.target.value)}
+                style={{ padding: '0.7rem 1rem', width: '350px', backgroundColor: '#111520', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none', marginTop: '1.5rem' }}
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '2rem' }}>
+              {productosFiltrados.map(i => (
+                <div key={i.id} style={{ backgroundColor: '#111520', borderRadius: '12px', border: '1px solid #1e2638', padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', backgroundColor: 'rgba(6, 182, 212, 0.1)', color: '#06b6d4', padding: '0.3rem 0.6rem', borderRadius: '4px', fontWeight: 700 }}>
+                      {i.categoria_insumo}
+                    </span>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0.8rem 0 0.5rem 0', color: '#fff' }}>{i.nombre_producto}</h3>
+                    <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '0.3rem' }}>Proveedor: <strong>{i.proveedor || 'Apex Pro'}</strong></p>
+                    <p style={{ color: i.stock > 0 ? '#10b981' : '#ef4444', fontSize: '0.9rem', fontWeight: 600 }}>Stock disponible: {i.stock} unidades</p>
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Hora</label>
-                    <input type="time" value={cHora} onChange={(e) => setCHora(e.target.value)} required style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', borderTop: '1px solid #1e2638', paddingTop: '1rem' }}>
+                    <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#06b6d4' }}>${Number(i.precio_unitario).toLocaleString('es-MX')}</span>
+                    <button
+                      onClick={() => agregarAlCarrito(i)}
+                      disabled={i.stock <= 0}
+                      style={{ backgroundColor: i.stock > 0 ? '#06b6d4' : '#334155', color: '#090b10', border: 'none', padding: '0.6rem 1rem', borderRadius: '8px', fontWeight: 700, cursor: i.stock > 0 ? 'pointer' : 'not-allowed' }}
+                    >
+                      {i.stock > 0 ? '+ Agregar' : 'Agotado'}
+                    </button>
                   </div>
                 </div>
-                <button type="submit" style={{ width: '100%', padding: '0.95rem', backgroundColor: '#d4af37', color: '#07090e', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>
-                  CONFIRMAR RESERVACIÓN
-                </button>
-              </form>
+              ))}
             </div>
           </div>
         )}
 
-        {/* ================= VISTA USUARIO: TIENDA CON CARRITO ================= */}
-        {!isAdmin && tab === 'inventario' && (
+        {/* 4. EMPLEADOS */}
+        {!isAdmin && tab === 'empleados' && (
           <div>
-            <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-              <input type="text" placeholder="Buscar producto en tienda..." value={busquedaProducto} onChange={(e) => setBusquedaProducto(e.target.value)} style={{ width: '100%', maxWidth: '420px', padding: '0.85rem 1.2rem', borderRadius: '8px', border: '1px solid #1a2233', backgroundColor: '#12151c', color: 'white' }} />
-              
-              {totalArticulosCarrito > 0 && (
-                <button onClick={() => setShowCarritoModal(true)} style={{ backgroundColor: '#d4af37', color: '#07090e', border: 'none', padding: '0.8rem 1.4rem', borderRadius: '8px', fontWeight: 800, cursor: 'pointer', fontSize: '0.9rem' }}>
-                  🛒 Ver Carrito ({totalArticulosCarrito}) — ${totalCarrito.toLocaleString('es-MX')}
-                </button>
+            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+              <h2 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff', marginBottom: '0.5rem' }}>NUESTRO EQUIPO TÉCNICO</h2>
+              <p style={{ color: '#94a3b8', fontSize: '1.1rem' }}>Certificados internacionalmente en protección de pintura y detailing.</p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+              {empleados.map(e => (
+                <div key={e.id} style={{ backgroundColor: '#111520', borderRadius: '12px', border: '1px solid #1e2638', padding: '2rem', textAlign: 'center' }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👨‍🔧</div>
+                  <h3 style={{ color: '#fff', fontSize: '1.3rem', fontWeight: 700, marginBottom: '0.5rem' }}>{e.nombre_empleado}</h3>
+                  <p style={{ color: '#06b6d4', fontWeight: 600, marginBottom: '0.8rem' }}>{e.especialidad}</p>
+                  <span style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700 }}>
+                    {e.estado || 'Disponible'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 5. PROMOCIONES */}
+        {!isAdmin && tab === 'promociones' && (
+          <div>
+            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+              <h2 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff', marginBottom: '0.5rem' }}>PROMOCIONES ESPECIALES</h2>
+              <p style={{ color: '#94a3b8', fontSize: '1.1rem' }}>Aprovecha nuestros paquetes exclusivos por tiempo limitado.</p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '2rem' }}>
+              {promociones.map(p => (
+                <div key={p.id} style={{ backgroundColor: '#111520', borderRadius: '12px', border: '1px solid #06b6d4', padding: '2rem', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', backgroundColor: '#06b6d4', color: '#090b10', padding: '0.4rem 0.8rem', borderRadius: '6px', fontWeight: 900 }}>
+                    -{p.descuento_porcentaje}% OFF
+                  </div>
+                  <h3 style={{ color: '#fff', fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.8rem' }}>{p.titulo_promo}</h3>
+                  <p style={{ color: '#94a3b8', lineHeight: 1.6, marginBottom: '1.5rem' }}>{p.descripcion_promo}</p>
+                  <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Vigencia hasta: {p.vigencia}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 6. PANEL DE ADMINISTRACIÓN */}
+        {isAdmin && tab === 'admin' && (
+          <div>
+            <h2 style={{ color: '#06b6d4', fontSize: '2rem', fontWeight: 800, marginBottom: '2rem' }}>⚙️ Panel de Control y Gestión del Estudio</h2>
+
+            {/* Sub-sección Citas Registradas */}
+            <div style={{ backgroundColor: '#111520', borderRadius: '12px', border: '1px solid #1e2638', padding: '2rem', marginBottom: '2.5rem' }}>
+              <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '1rem' }}>📅 Citas y Agenda de Clientes</h3>
+              {citas.length === 0 ? (
+                <p style={{ color: '#94a3b8' }}>No hay citas registradas en el sistema.</p>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #1e2638', color: '#94a3b8' }}>
+                        <th style={{ padding: '0.8rem' }}>Cliente</th>
+                        <th style={{ padding: '0.8rem' }}>Teléfono</th>
+                        <th style={{ padding: '0.8rem' }}>Servicio</th>
+                        <th style={{ padding: '0.8rem' }}>Fecha y Hora</th>
+                        <th style={{ padding: '0.8rem' }}>Estado / Alerta</th>
+                        <th style={{ padding: '0.8rem' }}>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {citas.map(c => {
+                        const alerta = obtenerEstadoTiempoCita(c.fecha_cita, c.hora_cita);
+                        return (
+                          <tr key={c.id} style={{ borderBottom: '1px solid #1e2638' }}>
+                            <td style={{ padding: '0.8rem', fontWeight: 600 }}>{c.nombre_cliente}</td>
+                            <td style={{ padding: '0.8rem' }}>{c.telefono}</td>
+                            <td style={{ padding: '0.8rem' }}>{c.servicio_solicitado}</td>
+                            <td style={{ padding: '0.8rem' }}>{String(c.fecha_cita).split('T')[0]} {c.hora_cita}</td>
+                            <td style={{ padding: '0.8rem' }}>
+                              <span style={{ backgroundColor: alerta.bg, color: alerta.color, padding: '0.3rem 0.6rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700 }}>
+                                {alerta.texto}
+                              </span>
+                            </td>
+                            <td style={{ padding: '0.8rem' }}>
+                              <button onClick={() => eliminarCitaAtendida(c.id)} style={{ backgroundColor: '#ef4444', color: '#fff', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>
+                                Eliminar
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
 
+            {/* Sub-sección Pedidos de Tienda */}
+            <div style={{ backgroundColor: '#111520', borderRadius: '12px', border: '1px solid #1e2638', padding: '2rem', marginBottom: '2.5rem' }}>
+              <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '1rem' }}>🛒 Pedidos de Tienda Realizados por Clientes</h3>
+              {pedidosClientes.length === 0 ? (
+                <p style={{ color: '#94a3b8' }}>No hay pedidos de tienda registrados.</p>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #1e2638', color: '#94a3b8' }}>
+                        <th style={{ padding: '0.8rem' }}>Cliente</th>
+                        <th style={{ padding: '0.8rem' }}>Teléfono</th>
+                        <th style={{ padding: '0.8rem' }}>Productos Solicitados</th>
+                        <th style={{ padding: '0.8rem' }}>Total</th>
+                        <th style={{ padding: '0.8rem' }}>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pedidosClientes.map(p => (
+                        <tr key={p.id} style={{ borderBottom: '1px solid #1e2638' }}>
+                          <td style={{ padding: '0.8rem', fontWeight: 600 }}>{p.nombre_cliente}</td>
+                          <td style={{ padding: '0.8rem' }}>{p.telefono}</td>
+                          <td style={{ padding: '0.8rem' }}>{p.nombre_producto}</td>
+                          <td style={{ padding: '0.8rem', color: '#06b6d4', fontWeight: 700 }}>${Number(p.precio).toLocaleString('es-MX')}</td>
+                          <td style={{ padding: '0.8rem' }}>
+                            <button onClick={() => eliminarPedidoEntregado(p.id)} style={{ backgroundColor: '#ef4444', color: '#fff', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>
+                              Entregado / Borrar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* Gestión / Edición / Eliminación de Catálogos */}
+            <div style={{ backgroundColor: '#111520', borderRadius: '12px', border: '1px solid #1e2638', padding: '2rem' }}>
+              <h3 style={{ color: '#06b6d4', marginTop: 0, marginBottom: '0.4rem', fontSize: '1.4rem' }}>🛠️ Gestión, Edición y Eliminación de Catálogos</h3>
+              <p style={{ color: '#94a3b8', marginBottom: '2rem' }}>Modifica los datos o da de baja servicios e insumos sin afectar las relaciones de la base de datos.</p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                
+                {/* Servicios Activos Admin */}
+                <div>
+                  <h4 style={{ color: '#fff', borderBottom: '1px solid #1e2638', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Servicios Activos</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '400px', overflowY: 'auto' }}>
+                    {servicios.map(s => (
+                      <div key={s.id} style={{ backgroundColor: '#090b10', padding: '1rem', borderRadius: '8px', border: '1px solid #1e2638', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <strong style={{ color: '#fff' }}>{s.nombre}</strong>
+                          <div style={{ color: '#06b6d4', fontSize: '0.9rem' }}>${s.precio}</div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <button onClick={() => prepararEdicionServicio(s)} style={{ backgroundColor: '#f59e0b', color: '#090b10', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 700 }}>Editar</button>
+                          <button onClick={() => eliminarServicioAdmin(s.id)} style={{ backgroundColor: '#ef4444', color: '#fff', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 700 }}>Eliminar</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Productos en Tienda Admin */}
+                <div>
+                  <h4 style={{ color: '#fff', borderBottom: '1px solid #1e2638', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Productos en Tienda</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '400px', overflowY: 'auto' }}>
+                    {inventario.map(i => (
+                      <div key={i.id} style={{ backgroundColor: '#090b10', padding: '1rem', borderRadius: '8px', border: '1px solid #1e2638', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <strong style={{ color: '#fff' }}>{i.nombre_producto}</strong>
+                          <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>Stock: {i.stock} | ${i.precio_unitario}</div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <button onClick={() => setProductoEditando(i)} style={{ backgroundColor: '#f59e0b', color: '#090b10', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 700 }}>Editar</button>
+                          <button onClick={() => eliminarProductoAdmin(i.id)} style={{ backgroundColor: '#ef4444', color: '#fff', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 700 }}>Eliminar</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        )}
+
+      </div>
+
+      {/* MODAL DE LOGIN ADMIN */}
+      {showLoginModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000 }}>
+          <div style={{ backgroundColor: '#111520', padding: '2.5rem', borderRadius: '12px', border: '1px solid #06b6d4', width: '380px' }}>
+            <h3 style={{ color: '#06b6d4', margin: '0 0 1.5rem 0', textAlign: 'center' }}>Acceso Administrativo</h3>
+            {loginError && <p style={{ color: '#ef4444', textAlign: 'center', marginBottom: '1rem' }}>Credenciales incorrectas</p>}
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <input type="text" placeholder="Usuario" value={userAdmin} onChange={e => setUserAdmin(e.target.value)} required style={{ padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+              <input type="password" placeholder="Contraseña" value={passAdmin} onChange={e => setPassAdmin(e.target.value)} required style={{ padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button type="button" onClick={() => setShowLoginModal(false)} style={{ flex: 1, backgroundColor: '#334155', color: '#fff', border: 'none', padding: '0.8rem', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>Cancelar</button>
+                <button type="submit" style={{ flex: 1, backgroundColor: '#06b6d4', color: '#090b10', border: 'none', padding: '0.8rem', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>Ingresar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE CARRITO */}
+      {showCarritoModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000 }}>
+          <div style={{ backgroundColor: '#111520', padding: '2rem', borderRadius: '12px', border: '1px solid #1e2638', width: '450px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h3 style={{ color: '#06b6d4', margin: 0 }}>🛒 Tu Carrito de Compras</h3>
+              <button onClick={() => setShowCarritoModal(false)} style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
+            </div>
+
             {mensajeCompra && (
-              <div style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#d4af37', padding: '1rem', borderRadius: '8px', marginBottom: '2rem', textAlign: 'center', fontWeight: 700, border: '1px solid #d4af37' }}>
+              <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', border: '1px solid #10b981', color: '#10b981', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', textAlign: 'center', fontWeight: 600 }}>
                 {mensajeCompra}
               </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.8rem' }}>
-              {productosFiltrados.map((i) => {
-                const enCarrito = carrito.find((c) => c.id === i.id);
-                return (
-                  <div key={i.id} style={{ backgroundColor: '#12151c', borderRadius: '12px', border: '1px solid #1a2233', padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxShadow: '0 8px 20px rgba(0,0,0,0.4)' }}>
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.8rem' }}>
-                        <span style={{ fontSize: '0.72rem', color: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.15)', padding: '0.25rem 0.6rem', borderRadius: '4px', fontWeight: 700, textTransform: 'uppercase' }}>
-                          {i.categoria_insumo}
-                        </span>
-                        <span style={{ fontSize: '0.78rem', color: i.stock > 0 ? '#34d399' : '#f87171', fontWeight: 700 }}>
-                          ● {i.stock} disponibles
-                        </span>
+            {carrito.length === 0 ? (
+              <p style={{ color: '#94a3b8', textAlign: 'center', padding: '2rem 0' }}>Tu carrito está vacío.</p>
+            ) : (
+              <div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+                  {carrito.map(item => (
+                    <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#090b10', padding: '0.8rem', borderRadius: '8px', border: '1px solid #1e2638' }}>
+                      <div>
+                        <strong style={{ color: '#fff', display: 'block' }}>{item.nombre_producto}</strong>
+                        <span style={{ color: '#06b6d4', fontSize: '0.9rem' }}>${item.precio_unitario} c/u</span>
                       </div>
-                      <h3 style={{ color: '#ffffff', fontSize: '1.1rem', margin: '0 0 0.4rem', fontWeight: 700 }}>🧴 {i.nombre_producto}</h3>
-                      <p style={{ color: '#94a3b8', fontSize: '0.85rem', margin: '0 0 1.2rem' }}>Proveedor: <strong style={{ color: '#cbd5e1' }}>{i.proveedor}</strong></p>
-                    </div>
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #1a2233', paddingTop: '1rem', marginBottom: '1rem' }}>
-                        <span style={{ fontSize: '0.78rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Precio</span>
-                        <strong style={{ color: '#d4af37', fontSize: '1.25rem', fontWeight: 800 }}>${Number(i.precio_unitario).toLocaleString('es-MX')}</strong>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                        <button onClick={() => cambiarCantidadCarrito(item.id, -1)} style={{ backgroundColor: '#334155', color: '#fff', border: 'none', width: '25px', height: '25px', borderRadius: '4px', cursor: 'pointer' }}>-</button>
+                        <span style={{ fontWeight: 700 }}>{item.cantidad}</span>
+                        <button onClick={() => cambiarCantidadCarrito(item.id, 1)} style={{ backgroundColor: '#334155', color: '#fff', border: 'none', width: '25px', height: '25px', borderRadius: '4px', cursor: 'pointer' }}>+</button>
+                        <button onClick={() => quitarDelCarrito(item.id)} style={{ backgroundColor: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', marginLeft: '0.5rem' }}>🗑️</button>
                       </div>
-                      <button onClick={() => agregarAlCarrito(i)} style={{ width: '100%', padding: '0.75rem', backgroundColor: enCarrito ? '#10b981' : '#d4af37', color: '#07090e', border: 'none', borderRadius: '6px', fontWeight: 800, cursor: 'pointer', fontSize: '0.85rem' }}>
-                        {enCarrito ? `✓ En Carrito (${enCarrito.cantidad}) + Agregar otro` : '🛒 Agregar al Carrito'}
-                      </button>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ================= VISTA USUARIO: EMPLEADOS ================= */}
-        {!isAdmin && tab === 'empleados' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.8rem' }}>
-            {empleados.map((em) => (
-              <div key={em.id} style={{ backgroundColor: '#12151c', borderRadius: '12px', border: '1px solid #1a2233', padding: '1.8rem', boxShadow: '0 8px 20px rgba(0,0,0,0.4)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'rgba(212, 175, 55, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>👨‍🔧</div>
-                  <div>
-                    <h3 style={{ color: '#fff', fontSize: '1.1rem', margin: 0, fontWeight: 700 }}>{em.nombre_empleado}</h3>
-                    <span style={{ color: '#34d399', fontSize: '0.78rem', fontWeight: 700 }}>● {em.estado}</span>
-                  </div>
+                  ))}
                 </div>
-                <p style={{ color: '#cbd5e1', fontSize: '0.9rem', margin: '0 0 1rem' }}><strong style={{ color: '#d4af37' }}>Especialidad:</strong> {em.especialidad}</p>
-                <p style={{ color: '#94a3b8', fontSize: '0.85rem', margin: 0 }}>📞 Teléfono: {em.telefono}</p>
-              </div>
-            ))}
-          </div>
-        )}
 
-        {/* ================= VISTA USUARIO: PROMOCIONES ================= */}
-        {!isAdmin && tab === 'promociones' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.8rem' }}>
-            {promociones.map((p) => (
-              <div key={p.id} style={{ background: 'linear-gradient(135deg, #12151c, #1a2233)', borderRadius: '12px', border: '1px solid #d4af37', padding: '2rem', boxShadow: '0 10px 25px rgba(212,175,55,0.1)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h3 style={{ color: '#fff', fontSize: '1.2rem', margin: 0, fontWeight: 800 }}>✨ {p.titulo_promo}</h3>
-                  <span style={{ backgroundColor: '#d4af37', color: '#07090e', padding: '0.3rem 0.8rem', borderRadius: '20px', fontWeight: 900, fontSize: '0.85rem' }}>{p.descuento_porcentaje}% OFF</span>
+                <div style={{ borderTop: '1px solid #1e2638', paddingTop: '1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', fontSize: '1.2rem', fontWeight: 900 }}>
+                  <span>Total a Pagar:</span>
+                  <span style={{ color: '#06b6d4' }}>${totalCarrito.toLocaleString('es-MX')}</span>
                 </div>
-                <p style={{ color: '#cbd5e1', fontSize: '0.9rem', margin: '0 0 1.5rem', lineHeight: '1.5' }}>{p.descripcion_promo}</p>
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.9rem', fontSize: '0.82rem', color: '#94a3b8' }}>
-                  📅 Vigencia válida hasta el: <strong style={{ color: '#fff' }}>{String(p.vigencia).split('T')[0]}</strong>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
 
-        {/* ================= PANEL DE ADMINISTRACIÓN EXCLUSIVO ================= */}
-        {isAdmin && (
-          <div>
-            <div style={{ marginBottom: '2rem', borderBottom: '1px solid #1a2233', paddingBottom: '1rem' }}>
-              <h2 style={{ color: '#d4af37', fontSize: '2rem', fontWeight: 800, margin: 0 }}>⚙️ Panel de Control y Gestión del Estudio</h2>
-              <p style={{ color: '#94a3b8', fontSize: '0.95rem', margin: '0.4rem 0 0' }}>Supervise citas de clientes, alertas de tiempo, pedidos y gestione catálogos.</p>
-            </div>
-
-            {citasUrgentesCount > 0 && (
-              <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', padding: '1rem 1.5rem', borderRadius: '10px', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '1.5rem' }}>🔔</span>
-                <div>
-                  <strong style={{ color: '#fca5a5', display: 'block', fontSize: '0.95rem' }}>¡Atención! Tienes {citasUrgentesCount} {citasUrgentesCount === 1 ? 'cita programada' : 'citas programadas'} para hoy o en menos de 24 horas.</strong>
-                  <span style={{ color: '#cbd5e1', fontSize: '0.82rem' }}>Revisa los indicadores de estado en la tabla inferior para preparar el espacio.</span>
-                </div>
+                <form onSubmit={confirmarPedidoCarrito} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <input type="text" placeholder="Tu Nombre Completo" required value={compraNombre} onChange={e => setCompraNombre(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+                  <input type="tel" placeholder="Tu Teléfono" required value={compraTel} onChange={e => setCompraTel(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+                  <button type="submit" style={{ backgroundColor: '#06b6d4', color: '#090b10', border: 'none', padding: '0.9rem', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>
+                    Confirmar Pedido 🚀
+                  </button>
+                </form>
               </div>
             )}
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '2rem' }}>
-              
-              {/* Citas Solicitadas */}
-              <div style={{ backgroundColor: '#12151c', padding: '2rem', borderRadius: '12px', border: '1px solid #1a2233', overflowX: 'auto', height: 'fit-content' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                  <div>
-                    <h3 style={{ color: '#d4af37', marginTop: 0, marginBottom: '0.3rem', fontSize: '1.35rem' }}>🕒 Citas Solicitadas</h3>
-                    <p style={{ color: '#94a3b8', fontSize: '0.85rem', margin: 0 }}>Control de agenda y alertas de proximidad.</p>
-                  </div>
-                  <span style={{ backgroundColor: 'rgba(212, 175, 55, 0.2)', color: '#d4af37', padding: '0.3rem 0.8rem', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 700 }}>
-                    {citas.length} Pendientes
-                  </span>
-                </div>
-
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '2px solid #1a2233', color: '#d4af37' }}>
-                      <th style={{ padding: '0.8rem' }}>CLIENTE / TEL</th>
-                      <th style={{ padding: '0.8rem' }}>TRATAMIENTO</th>
-                      <th style={{ padding: '0.8rem' }}>FECHA Y HORA</th>
-                      <th style={{ padding: '0.8rem' }}>PROXIMIDAD</th>
-                      <th style={{ padding: '0.8rem', textAlign: 'right' }}>ACCIÓN</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {citas.map((c) => {
-                      const alerta = obtenerEstadoTiempoCita(c.fecha_cita, c.hora_cita);
-                      return (
-                        <tr key={c.id || Math.random()} style={{ borderBottom: '1px solid #1a2233' }}>
-                          <td style={{ padding: '0.85rem' }}>
-                            <strong style={{ color: '#ffffff', display: 'block' }}>{c.nombre_cliente}</strong>
-                            <span style={{ color: '#94a3b8', fontSize: '0.78rem' }}>📞 {c.telefono}</span>
-                          </td>
-                          <td style={{ padding: '0.85rem', color: '#cbd5e1' }}>{c.servicio_solicitado}</td>
-                          <td style={{ padding: '0.85rem', color: '#94a3b8' }}>
-                            📅 {String(c.fecha_cita).split('T')[0]} <br />
-                            ⏰ {c.hora_cita}
-                          </td>
-                          <td style={{ padding: '0.85rem' }}>
-                            <span style={{ backgroundColor: alerta.bg, color: alerta.color, padding: '0.3rem 0.6rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800, whiteSpace: 'nowrap' }}>
-                              {alerta.texto}
-                            </span>
-                          </td>
-                          <td style={{ padding: '0.85rem', textAlign: 'right' }}>
-                            <button
-                              onClick={() => eliminarCitaAtendida(c.id)}
-                              title="Marcar cita como atendida y eliminar"
-                              style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#34d399', border: '1px solid #10b981', padding: '0.4rem 0.7rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700, whiteSpace: 'nowrap' }}
-                            >
-                              ✓ Atendida
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                    {citas.length === 0 && (
-                      <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No hay citas pendientes por atender.</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Pedidos de Tienda */}
-              <div style={{ backgroundColor: '#12151c', padding: '2rem', borderRadius: '12px', border: '1px solid #1a2233', overflowX: 'auto', height: 'fit-content' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                  <div>
-                    <h3 style={{ color: '#d4af37', marginTop: 0, marginBottom: '0.3rem', fontSize: '1.35rem' }}>🛒 Pedidos de Tienda</h3>
-                    <p style={{ color: '#94a3b8', fontSize: '0.85rem', margin: 0 }}>Compras solicitadas por clientes.</p>
-                  </div>
-                  <span style={{ backgroundColor: 'rgba(212, 175, 55, 0.2)', color: '#d4af37', padding: '0.3rem 0.8rem', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 700 }}>
-                    {pedidosClientes.length} Pedidos
-                  </span>
-                </div>
-
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '2px solid #1a2233', color: '#d4af37' }}>
-                      <th style={{ padding: '0.8rem' }}>CLIENTE / TEL</th>
-                      <th style={{ padding: '0.8rem' }}>PRODUCTOS</th>
-                      <th style={{ padding: '0.8rem' }}>TOTAL</th>
-                      <th style={{ padding: '0.8rem', textAlign: 'right' }}>ACCIÓN</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pedidosClientes.map((pc) => (
-                      <tr key={pc.id || Math.random()} style={{ borderBottom: '1px solid #1a2233' }}>
-                        <td style={{ padding: '0.85rem' }}>
-                          <strong style={{ color: '#ffffff', display: 'block' }}>{pc.nombre_cliente}</strong>
-                          <span style={{ color: '#94a3b8', fontSize: '0.78rem' }}>📞 {pc.telefono}</span>
-                        </td>
-                        <td style={{ padding: '0.85rem', color: '#cbd5e1' }}>{pc.nombre_producto}</td>
-                        <td style={{ padding: '0.85rem', fontWeight: 800, color: '#d4af37' }}>${Number(pc.precio).toLocaleString('es-MX')}</td>
-                        <td style={{ padding: '0.85rem', textAlign: 'right' }}>
-                          <button
-                            onClick={() => eliminarPedidoEntregado(pc.id)}
-                            title="Marcar pedido como entregado y eliminar"
-                            style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#34d399', border: '1px solid #10b981', padding: '0.4rem 0.7rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700, whiteSpace: 'nowrap' }}
-                          >
-                            ✓ Entregado
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                    {pedidosClientes.length === 0 && (
-                      <tr><td colSpan="4" style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No hay pedidos pendientes.</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-            </div>
-
-            {/* Formularios de Registro en Admin */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem', marginTop: '2rem' }}>
-              
-              {/* Agregar Servicio */}
-              <div style={{ backgroundColor: '#12151c', padding: '2.5rem', borderRadius: '12px', border: '1px solid #1a2233' }}>
-                <h3 style={{ color: '#d4af37', marginTop: 0, marginBottom: '0.4rem', fontSize: '1.4rem' }}>📸 Agregar Nuevo Servicio</h3>
-                {servicioExito && <div style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#d4af37', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', textAlign: 'center', fontWeight: 700 }}>✦ ¡Servicio agregado!</div>}
-                
-                <form onSubmit={agregarServicioAdmin}>
-                  <div style={{ marginBottom: '1.1rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Nombre</label>
-                    <input type="text" value={nuevoServNombre} onChange={(e) => setNuevoServNombre(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                  </div>
-                  <div style={{ marginBottom: '1.1rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Descripción</label>
-                    <input type="text" value={nuevoServDesc} onChange={(e) => setNuevoServDesc(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                  </div>
-                  <div style={{ marginBottom: '1.1rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>URL de Imagen</label>
-                    <input type="text" value={nuevoServImg} onChange={(e) => setNuevoServImg(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                  </div>
-                  <div style={{ marginBottom: '1.1rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Precio ($ MXN)</label>
-                    <input type="number" value={nuevoServPrecio} onChange={(e) => setNuevoServPrecio(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                  </div>
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Categoría</label>
-                    <select value={nuevoServCat} onChange={(e) => setNuevoServCat(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white' }}>
-                      {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre_categoria}</option>)}
-                    </select>
-                  </div>
-                  <button type="submit" style={{ width: '100%', padding: '0.9rem', backgroundColor: '#d4af37', color: '#07090e', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>REGISTRAR SERVICIO</button>
-                </form>
-              </div>
-
-              {/* Agregar Producto */}
-              <div style={{ backgroundColor: '#12151c', padding: '2.5rem', borderRadius: '12px', border: '1px solid #1a2233' }}>
-                <h3 style={{ color: '#d4af37', marginTop: 0, marginBottom: '0.4rem', fontSize: '1.4rem' }}>🧴 Agregar Producto a Tienda</h3>
-                {productoExito && <div style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#d4af37', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', textAlign: 'center', fontWeight: 700 }}>✦ ¡Producto agregado!</div>}
-                
-                <form onSubmit={agregarProductoAdmin}>
-                  <div style={{ marginBottom: '1.1rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Nombre del Producto</label>
-                    <input type="text" value={nuevoProdNombre} onChange={(e) => setNuevoProdNombre(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                  </div>
-                  <div style={{ marginBottom: '1.1rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Categoría de Insumo</label>
-                    <select value={nuevoProdCat} onChange={(e) => setNuevoProdCat(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white' }}>
-                      <option value="Químicos">Químicos</option>
-                      <option value="Accesorios">Accesorios</option>
-                      <option value="Herramientas">Herramientas</option>
-                    </select>
-                  </div>
-                  <div style={{ marginBottom: '1.1rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Stock</label>
-                    <input type="number" value={nuevoProdStock} onChange={(e) => setNuevoProdStock(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                  </div>
-                  <div style={{ marginBottom: '1.1rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Precio Unitario ($ MXN)</label>
-                    <input type="number" value={nuevoProdPrecio} onChange={(e) => setNuevoProdPrecio(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                  </div>
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem', fontWeight: 600 }}>Proveedor</label>
-                    <input type="text" value={nuevoProdProv} onChange={(e) => setNuevoProdProv(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
-                  </div>
-                  <button type="submit" style={{ width: '100%', padding: '0.9rem', backgroundColor: '#d4af37', color: '#07090e', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>REGISTRAR PRODUCTO</button>
-                </form>
-              </div>
-
-            </div>
-
-            {/* Gestión / Edición / Eliminación de Catálogos */}
-            <div style={{ backgroundColor: '#12151c', padding: '2.5rem', borderRadius: '12px', border: '1px solid #1a2233', marginTop: '2rem' }}>
-              <h3 style={{ color: '#d4af37', marginTop: 0, marginBottom: '0.4rem', fontSize: '1.4rem' }}>🛠️ Gestión, Edición y Eliminación</h3>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', marginTop: '1.5rem' }}>
-                <div>
-                  <h4 style={{ color: '#fff', borderBottom: '1px solid #1a2233', paddingBottom: '0.5rem' }}>Servicios Activos</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '220px', overflowY: 'auto', marginTop: '0.8rem' }}>
-                    {servicios.map(s => (
-                      <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#07090e', padding: '0.6rem 0.9rem', borderRadius: '6px', border: '1px solid #1a2233', gap: '8px' }}>
-                        <div style={{ flex: 1 }}>
-                          <span style={{ color: '#cbd5e1', fontSize: '0.85rem', display: 'block', fontWeight: 600 }}>{s.nombre}</span>
-                          <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>${Number(s.precio).toLocaleString('es-MX')}</span>
-                        </div>
-                        <div style={{ display: 'flex', gap: '6px' }}>
-                          <button onClick={() => prepararEdicionServicio(s)} style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#d4af37', border: '1px solid #d4af37', padding: '0.25rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
-                            Editar
-                          </button>
-                          <button onClick={() => eliminarServicioAdmin(s.id)} style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid #ef4444', padding: '0.25rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
-                            Eliminar
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h4 style={{ color: '#fff', borderBottom: '1px solid #1a2233', paddingBottom: '0.5rem' }}>Productos en Tienda</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '220px', overflowY: 'auto', marginTop: '0.8rem' }}>
-                    {inventario.map(i => (
-                      <div key={i.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#07090e', padding: '0.6rem 0.9rem', borderRadius: '6px', border: '1px solid #1a2233', gap: '8px' }}>
-                        <div style={{ flex: 1 }}>
-                          <span style={{ color: '#cbd5e1', fontSize: '0.85rem', display: 'block', fontWeight: 600 }}>{i.nombre_producto}</span>
-                          <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Stock: {i.stock} | ${Number(i.precio_unitario).toLocaleString('es-MX')}</span>
-                        </div>
-                        <div style={{ display: 'flex', gap: '6px' }}>
-                          <button onClick={() => setProductoEditando(i)} style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#d4af37', border: '1px solid #d4af37', padding: '0.25rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
-                            Editar
-                          </button>
-                          <button onClick={() => eliminarProductoAdmin(i.id)} style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid #ef4444', padding: '0.25rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
-                            Eliminar
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
-        )}
+        </div>
+      )}
 
-      </main>
+      {/* MODAL DE EDICIÓN DE SERVICIO */}
+      {servicioEditando && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000 }}>
+          <div style={{ backgroundColor: '#111520', padding: '2rem', borderRadius: '12px', border: '1px solid #06b6d4', width: '400px' }}>
+            <h3 style={{ color: '#06b6d4', marginTop: 0, marginBottom: '1rem' }}>Editar Servicio</h3>
+            <form onSubmit={guardarEdicionServicio} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <input type="text" value={servicioEditando.nombre} onChange={e => setServicioEditando({ ...servicioEditando, nombre: e.target.value })} required style={{ padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px' }} />
+              <textarea value={servicioEditando.descripcion} onChange={e => setServicioEditando({ ...servicioEditando, descripcion: e.target.value })} required style={{ padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px' }} />
+              <input type="number" value={servicioEditando.precio} onChange={e => setServicioEditando({ ...servicioEditando, precio: e.target.value })} required style={{ padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px' }} />
+              <input type="text" placeholder="URL de Imagen" value={servicioEditando.imagen_url || ''} onChange={e => setServicioEditando({ ...servicioEditando, imagen_url: e.target.value })} style={{ padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px' }} />
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button type="button" onClick={() => setServicioEditando(null)} style={{ flex: 1, backgroundColor: '#334155', color: '#fff', border: 'none', padding: '0.8rem', borderRadius: '8px', cursor: 'pointer' }}>Cancelar</button>
+                <button type="submit" style={{ flex: 1, backgroundColor: '#06b6d4', color: '#090b10', border: 'none', padding: '0.8rem', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
-      {/* FOOTER */}
-      <footer style={{ backgroundColor: '#07090e', borderTop: '1px solid #1a2233', padding: '2rem', textAlign: 'center', color: '#64748b', fontSize: '0.85rem', marginTop: '4rem' }}>
-        <p style={{ margin: '0 0 0.3rem', color: '#94a3b8', fontWeight: 600, letterSpacing: '0.5px' }}>NEXUS DETAIL — Luxury Automotive Studio</p>
-        <p style={{ margin: 0 }}>Desarrollado por Anker Emiliano Ledesma Miranda (N° 23) | CECyTEM Jilotepec</p>
-      </footer>
+      {/* MODAL DE EDICIÓN DE PRODUCTO */}
+      {productoEditando && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000 }}>
+          <div style={{ backgroundColor: '#111520', padding: '2rem', borderRadius: '12px', border: '1px solid #06b6d4', width: '400px' }}>
+            <h3 style={{ color: '#06b6d4', marginTop: 0, marginBottom: '1rem' }}>Editar Producto</h3>
+            <form onSubmit={guardarEdicionProducto} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <input type="text" value={productoEditando.nombre_producto} onChange={e => setProductoEditando({ ...productoEditando, nombre_producto: e.target.value })} required style={{ padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px' }} />
+              <input type="number" value={productoEditando.stock} onChange={e => setProductoEditando({ ...productoEditando, stock: e.target.value })} required style={{ padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px' }} />
+              <input type="number" value={productoEditando.precio_unitario} onChange={e => setProductoEditando({ ...productoEditando, precio_unitario: e.target.value })} required style={{ padding: '0.8rem', backgroundColor: '#090b10', border: '1px solid #1e2638', color: '#fff', borderRadius: '8px' }} />
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button type="button" onClick={() => setProductoEditando(null)} style={{ flex: 1, backgroundColor: '#334155', color: '#fff', border: 'none', padding: '0.8rem', borderRadius: '8px', cursor: 'pointer' }}>Cancelar</button>
+                <button type="submit" style={{ flex: 1, backgroundColor: '#06b6d4', color: '#090b10', border: 'none', padding: '0.8rem', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -32,7 +32,7 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// 2. Servicios (Con borrado lógico / ocultar)
+// 2. Servicios (Con borrado lógico / ocultar y edición completa)
 app.get('/api/servicios', async (req, res) => {
     try {
         const [rows] = await db.query(`
@@ -50,7 +50,7 @@ app.get('/api/servicios', async (req, res) => {
 
 app.post('/api/servicios', async (req, res) => {
     let { nombre, descripcion, precio, imagen_url, categoria_id } = req.body;
-    const defaultImg = 'https://images.unsplash.com/photo-1617814076367-d759c7d7e738?auto=format&fit=crop&w=800&q=80';
+    const defaultImg = 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=800&q=80';
     
     if (!imagen_url || imagen_url.trim() === '') {
         imagen_url = defaultImg;
@@ -62,7 +62,7 @@ app.post('/api/servicios', async (req, res) => {
     try {
         await db.query(
             'INSERT INTO servicios (nombre, descripcion, precio, imagen_url, categoria_id, activo) VALUES (?, ?, ?, ?, ?, 1)',
-            [nombre, descripcion, precio, imagen_url, categoria_id]
+            [nombre, descripcion, Number(precio), imagen_url, Number(categoria_id)]
         );
         res.json({ success: true });
     } catch (err) {
@@ -72,12 +72,19 @@ app.post('/api/servicios', async (req, res) => {
 
 app.put('/api/servicios/:id', async (req, res) => {
     const { id } = req.params;
-    const { nombre, descripcion, precio, categoria_id } = req.body;
+    const { nombre, descripcion, precio, categoria_id, imagen_url } = req.body;
     try {
-        await db.query(
-            'UPDATE servicios SET nombre = ?, descripcion = ?, precio = ?, categoria_id = ? WHERE id = ?',
-            [nombre, descripcion, Number(precio), Number(categoria_id) || 1, id]
-        );
+        if (imagen_url && imagen_url.trim() !== '') {
+            await db.query(
+                'UPDATE servicios SET nombre = ?, descripcion = ?, precio = ?, categoria_id = ?, imagen_url = ? WHERE id = ?',
+                [nombre, descripcion, Number(precio), Number(categoria_id) || 1, imagen_url, id]
+            );
+        } else {
+            await db.query(
+                'UPDATE servicios SET nombre = ?, descripcion = ?, precio = ?, categoria_id = ? WHERE id = ?',
+                [nombre, descripcion, Number(precio), Number(categoria_id) || 1, id]
+            );
+        }
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
@@ -87,7 +94,6 @@ app.put('/api/servicios/:id', async (req, res) => {
 app.delete('/api/servicios/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        // Ocultar en lugar de borrar físicamente para mantener integridad relacional
         await db.query('UPDATE servicios SET activo = 0 WHERE id = ?', [id]);
         res.json({ success: true });
     } catch (err) {
@@ -95,7 +101,7 @@ app.delete('/api/servicios/:id', async (req, res) => {
     }
 });
 
-// Pedidos de productos de la tienda realizados por clientes
+// Pedidos de productos
 app.get('/api/pedidos_productos', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM pedidos_productos ORDER BY id DESC');
@@ -150,7 +156,6 @@ app.get('/api/citas', async (req, res) => {
 
 app.post('/api/citas', async (req, res) => {
     const { nombre_cliente, telefono, servicio_solicitado, fecha_cita, hora_cita, estado, observaciones } = req.body;
-    
     const estadoFinal = estado || 'Pendiente';
     const obsFinal = observaciones || 'Generada desde el panel';
 
@@ -229,7 +234,6 @@ app.put('/api/inventario/:id', async (req, res) => {
 app.delete('/api/inventario/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        // Ocultar en lugar de borrar físicamente para mantener integridad relacional
         await db.query('UPDATE inventario SET activo = 0 WHERE id = ?', [id]);
         res.json({ success: true });
     } catch (err) {
@@ -285,7 +289,17 @@ app.delete('/api/empleados/:id', async (req, res) => {
     }
 });
 
-// 7. Módulo de Consultas
+// 7. Promociones (Evita 404 en el frontend)
+app.get('/api/promociones', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM promociones ORDER BY id DESC');
+        res.json({ success: true, promociones: rows });
+    } catch (err) {
+        res.json({ success: false, promociones: [] });
+    }
+});
+
+// 8. Módulo de Consultas
 app.get('/api/consultas', async (req, res) => {
     const { tipo } = req.query;
     let query = '';
