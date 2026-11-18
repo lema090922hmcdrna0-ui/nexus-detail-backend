@@ -6,6 +6,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Inicializar columnas de borrado lógico (ocultar) automáticamente al arrancar
+async function inicializarBorradoLogico() {
+    try {
+        await db.query('ALTER TABLE servicios ADD COLUMN activo TINYINT(1) DEFAULT 1');
+    } catch (e) { /* La columna ya existe */ }
+    try {
+        await db.query('ALTER TABLE inventario ADD COLUMN activo TINYINT(1) DEFAULT 1');
+    } catch (e) { /* La columna ya existe */ }
+}
+inicializarBorradoLogico();
+
 // 1. Autenticación
 app.post('/api/login', async (req, res) => {
     const { usuario, password } = req.body;
@@ -21,13 +32,14 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// 2. Servicios
+// 2. Servicios (Con borrado lógico / ocultar)
 app.get('/api/servicios', async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT s.*, c.nombre_categoria 
             FROM servicios s
             LEFT JOIN categorias c ON s.categoria_id = c.id
+            WHERE s.activo = 1 OR s.activo IS NULL
             ORDER BY s.id DESC
         `);
         res.json({ success: true, servicios: rows });
@@ -49,7 +61,7 @@ app.post('/api/servicios', async (req, res) => {
 
     try {
         await db.query(
-            'INSERT INTO servicios (nombre, descripcion, precio, imagen_url, categoria_id) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO servicios (nombre, descripcion, precio, imagen_url, categoria_id, activo) VALUES (?, ?, ?, ?, ?, 1)',
             [nombre, descripcion, precio, imagen_url, categoria_id]
         );
         res.json({ success: true });
@@ -64,7 +76,7 @@ app.put('/api/servicios/:id', async (req, res) => {
     try {
         await db.query(
             'UPDATE servicios SET nombre = ?, descripcion = ?, precio = ?, categoria_id = ? WHERE id = ?',
-            [nombre, descripcion, precio, categoria_id, id]
+            [nombre, descripcion, Number(precio), Number(categoria_id) || 1, id]
         );
         res.json({ success: true });
     } catch (err) {
@@ -75,7 +87,8 @@ app.put('/api/servicios/:id', async (req, res) => {
 app.delete('/api/servicios/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        await db.query('DELETE FROM servicios WHERE id = ?', [id]);
+        // Ocultar en lugar de borrar físicamente para mantener integridad relacional
+        await db.query('UPDATE servicios SET activo = 0 WHERE id = ?', [id]);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
@@ -176,10 +189,10 @@ app.delete('/api/citas/:id', async (req, res) => {
     }
 });
 
-// 5. Inventario de Insumos
+// 5. Inventario de Insumos (Con borrado lógico / ocultar)
 app.get('/api/inventario', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM inventario ORDER BY id DESC');
+        const [rows] = await db.query('SELECT * FROM inventario WHERE activo = 1 OR activo IS NULL ORDER BY id DESC');
         res.json({ success: true, inventario: rows });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
@@ -190,8 +203,8 @@ app.post('/api/inventario', async (req, res) => {
     const { nombre_producto, categoria_insumo, stock, precio_unitario, proveedor } = req.body;
     try {
         await db.query(
-            'INSERT INTO inventario (nombre_producto, categoria_insumo, stock, precio_unitario, proveedor) VALUES (?, ?, ?, ?, ?)',
-            [nombre_producto, categoria_insumo, stock, precio_unitario, proveedor]
+            'INSERT INTO inventario (nombre_producto, categoria_insumo, stock, precio_unitario, proveedor, activo) VALUES (?, ?, ?, ?, ?, 1)',
+            [nombre_producto, categoria_insumo, Number(stock), Number(precio_unitario), proveedor]
         );
         res.json({ success: true });
     } catch (err) {
@@ -205,7 +218,7 @@ app.put('/api/inventario/:id', async (req, res) => {
     try {
         await db.query(
             'UPDATE inventario SET nombre_producto = ?, categoria_insumo = ?, stock = ?, precio_unitario = ?, proveedor = ? WHERE id = ?',
-            [nombre_producto, categoria_insumo, stock, precio_unitario, proveedor, id]
+            [nombre_producto, categoria_insumo, Number(stock), Number(precio_unitario), proveedor, id]
         );
         res.json({ success: true });
     } catch (err) {
@@ -216,7 +229,8 @@ app.put('/api/inventario/:id', async (req, res) => {
 app.delete('/api/inventario/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        await db.query('DELETE FROM inventario WHERE id = ?', [id]);
+        // Ocultar en lugar de borrar físicamente para mantener integridad relacional
+        await db.query('UPDATE inventario SET activo = 0 WHERE id = ?', [id]);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
@@ -277,11 +291,11 @@ app.get('/api/consultas', async (req, res) => {
     let query = '';
     try {
         if (tipo === 'servicios_categorias') {
-            query = 'SELECT s.id, s.nombre AS servicio, c.nombre_categoria AS categoria, s.precio FROM servicios s LEFT JOIN categorias c ON s.categoria_id = c.id';
+            query = 'SELECT s.id, s.nombre AS servicio, c.nombre_categoria AS categoria, s.precio FROM servicios s LEFT JOIN categorias c ON s.categoria_id = c.id WHERE s.activo = 1 OR s.activo IS NULL';
         } else if (tipo === 'citas') {
             query = 'SELECT * FROM citas';
         } else if (tipo === 'inventario') {
-            query = 'SELECT * FROM inventario';
+            query = 'SELECT * FROM inventario WHERE activo = 1 OR activo IS NULL';
         } else if (tipo === 'empleados') {
             query = 'SELECT * FROM empleados';
         } else if (tipo === 'administradores') {
