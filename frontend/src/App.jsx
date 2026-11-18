@@ -39,8 +39,8 @@ function App() {
   ]);
 
   const [promociones, setPromociones] = useState([
-    { id: 1, titulo_promo: 'Pack Aniversario Cerámico', descripcion_promo: 'Incluye recubrimiento cerámico 9H y lavado con 15% off.', descuento_porcentaje: 15, vigencia: '2026-06-30' },
-    { id: 2, titulo_promo: 'Mantenimiento de Interiores', descripcion_promo: 'Sanitización con ozono e hidratación de pieles.', descuento_porcentaje: 20, vigencia: '2026-05-15' }
+    { id: 1, codigo: 'APEX15', titulo_promo: 'Pack Aniversario Cerámico', descripcion_promo: 'Incluye recubrimiento cerámico 9H y lavado con 15% off.', descuento_porcentaje: 15, vigencia: '2026-06-30' },
+    { id: 2, codigo: 'INTERIOR20', titulo_promo: 'Mantenimiento de Interiores', descripcion_promo: 'Sanitización con ozono e hidratación de pieles.', descuento_porcentaje: 20, vigencia: '2026-05-15' }
   ]);
 
   const [busquedaServicio, setBusquedaServicio] = useState('');
@@ -50,7 +50,7 @@ function App() {
   // Notificación flotante (Toast)
   const [toastMensaje, setToastMensaje] = useState('');
 
-  // Formulario Cita (Vacío por defecto)
+  // Formulario Cita
   const [cCliente, setCCliente] = useState('');
   const [cTel, setCTel] = useState('');
   const [cServ, setCServ] = useState('');
@@ -65,7 +65,7 @@ function App() {
   const [compraTel, setCompraTel] = useState('');
   const [mensajeCompra, setMensajeCompra] = useState('');
 
-  // Admin: Nuevo Servicio (Vacío por defecto)
+  // Admin: Nuevo Servicio
   const [nuevoServNombre, setNuevoServNombre] = useState('');
   const [nuevoServDesc, setNuevoServDesc] = useState('');
   const [nuevoServPrecio, setNuevoServPrecio] = useState('');
@@ -73,7 +73,7 @@ function App() {
   const [nuevoServCat, setNuevoServCat] = useState('1');
   const [servicioExito, setServicioExito] = useState(false);
 
-  // Admin: Nuevo Producto (Vacío por defecto)
+  // Admin: Nuevo Producto
   const [nuevoProdNombre, setNuevoProdNombre] = useState('');
   const [nuevoProdCat, setNuevoProdCat] = useState('');
   const [nuevoProdStock, setNuevoProdStock] = useState('');
@@ -157,6 +157,18 @@ function App() {
 
   const seleccionarServicioParaCita = (nombreServicio) => {
     setCServ(nombreServicio);
+    setTab('citas');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const agendarConEspecialista = (nombreEmpleado) => {
+    setTab('citas');
+    mostrarToast(`✨ Especialista ${nombreEmpleado} seleccionado para tu cita.`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const aplicarCuponPromocion = (promo) => {
+    mostrarToast(`🎟️ ¡Cupón "${promo.codigo || 'APEX'}" aplicado! Descuento del ${promo.descuento_porcentaje}% listo.`);
     setTab('citas');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -678,7 +690,7 @@ function App() {
           </div>
         )}
 
-        {/* 4. EQUIPO (USUARIO) */}
+        {/* 4. EQUIPO (REDESIGN INTERACTIVO VIP) */}
         {!isAdmin && tab === 'empleados' && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: '3rem', backgroundColor: '#0a0a0c', padding: '3rem 2rem', borderRadius: '16px', border: '1px solid #1a1a1e' }}>
@@ -689,7 +701,7 @@ function App() {
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '2.5rem' }}>
               {empleados.map(e => (
-                <div key={e.id} style={{ backgroundColor: '#0a0a0c', borderRadius: '16px', border: '1px solid #1a1a1e', padding: '2.5rem', position: 'relative', overflow: 'hidden' }}>
+                <div key={e.id} style={{ backgroundColor: '#0a0a0c', borderRadius: '16px', border: '1px solid #1a1a1e', padding: '2.5rem', position: 'relative', overflow: 'hidden', transition: 'transform 0.3s, border-color 0.3s' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginBottom: '1.5rem' }}>
                     <div style={{ width: '70px', height: '70px', borderRadius: '50%', backgroundColor: '#141418', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '2.2rem', border: '2px solid #d4af37' }}>
                       👨‍🔧
@@ -703,10 +715,15 @@ function App() {
                     Especialidad: <strong style={{ color: '#fff' }}>{e.especialidad}</strong>
                   </p>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #1a1a1e', paddingTop: '1.2rem' }}>
-                    <span style={{ fontSize: '0.85rem', color: '#888890' }}>📞 Ext. Contacto</span>
                     <span style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '0.4rem 1rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 800 }}>
-                      {e.estado || 'Disponible'}
+                      ● {e.estado || 'Disponible'}
                     </span>
+                    <button 
+                      onClick={() => agendarConEspecialista(e.nombre_empleado)}
+                      style={{ backgroundColor: 'transparent', color: '#d4af37', border: '1px solid #d4af37', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+                    >
+                      Agendar con él ⚡
+                    </button>
                   </div>
                 </div>
               ))}
@@ -714,7 +731,7 @@ function App() {
           </div>
         )}
 
-        {/* 5. PROMOCIONES (USUARIO) */}
+        {/* 5. PROMOCIONES (REDESIGN INTERACTIVO ESTILO CUPÓN VIP) */}
         {!isAdmin && tab === 'promociones' && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: '3rem', backgroundColor: '#0a0a0c', padding: '3rem 2rem', borderRadius: '16px', border: '1px solid #1a1a1e' }}>
@@ -725,16 +742,20 @@ function App() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '2.5rem' }}>
               {promociones.map(p => (
-                <div key={p.id} style={{ backgroundColor: '#0a0a0c', borderRadius: '16px', border: '1px solid #d4af37', padding: '2.8rem', position: 'relative' }}>
+                <div key={p.id} style={{ backgroundColor: '#0a0a0c', borderRadius: '16px', border: '1px dashed #d4af37', padding: '2.8rem', position: 'relative' }}>
                   <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', backgroundColor: '#d4af37', color: '#050505', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 900, fontSize: '1rem' }}>
                     -{p.descuento_porcentaje}% OFF
                   </div>
-                  <h3 style={{ color: '#fff', fontSize: '1.6rem', fontWeight: 900, marginBottom: '0.8rem' }}>{p.titulo_promo}</h3>
+                  <span style={{ fontSize: '0.8rem', color: '#d4af37', fontWeight: 800, letterSpacing: '1px' }}>CUPÓN VIP: {p.codigo || 'APEX'}</span>
+                  <h3 style={{ color: '#fff', fontSize: '1.6rem', fontWeight: 900, margin: '0.5rem 0 0.8rem 0' }}>{p.titulo_promo}</h3>
                   <p style={{ color: '#888890', lineHeight: 1.6, marginBottom: '2rem', fontSize: '1rem' }}>{p.descripcion_promo}</p>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #1a1a1e', paddingTop: '1.2rem' }}>
-                    <span style={{ fontSize: '0.85rem', color: '#666' }}>⏳ Vigente hasta: {p.vigencia}</span>
-                    <button onClick={() => setTab('citas')} style={{ backgroundColor: 'transparent', color: '#d4af37', border: '1px solid #d4af37', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
-                      Aprovechar ➔
+                    <span style={{ fontSize: '0.85rem', color: '#666' }}>⏳ Válido hasta: {p.vigencia}</span>
+                    <button 
+                      onClick={() => aplicarCuponPromocion(p)} 
+                      style={{ backgroundColor: '#d4af37', color: '#050505', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}
+                    >
+                      Canjear Cupón 🎟️
                     </button>
                   </div>
                 </div>
@@ -925,7 +946,7 @@ function App() {
           </div>
         )}
 
-        {/* D. GESTIONAR CATÁLOGOS (Eliminar Servicios y Productos) */}
+        {/* D. GESTIONAR CATÁLOGOS */}
         {isAdmin && tab === 'admin-gestion' && (
           <div style={{ backgroundColor: '#0a0a0c', borderRadius: '16px', border: '1px solid #1a1a1e', padding: '2.5rem' }}>
             <h2 style={{ color: '#d4af37', marginTop: 0, marginBottom: '0.4rem', fontSize: '1.8rem', fontWeight: 900 }}>🛠️ Gestión y Eliminación de Catálogos</h2>
