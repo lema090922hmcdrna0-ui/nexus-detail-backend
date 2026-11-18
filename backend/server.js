@@ -103,6 +103,15 @@ app.post('/api/pedidos_productos', async (req, res) => {
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
+   // Eliminar pedido de tienda
+app.delete('/api/pedidos_productos/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.query('DELETE FROM pedidos_productos WHERE id = ?', [id]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
 });
 
 // 3. Categorías
