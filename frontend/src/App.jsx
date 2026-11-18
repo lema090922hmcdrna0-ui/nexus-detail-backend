@@ -73,6 +73,7 @@ function App() {
   const [nuevoServImg, setNuevoServImg] = useState('');
   const [nuevoServCat, setNuevoServCat] = useState('1');
   const [servicioExito, setServicioExito] = useState(false);
+  const [servicioEditando, setServicioEditando] = useState(null); // Estado para editar servicio
 
   // Admin Productos
   const [nuevoProdNombre, setNuevoProdNombre] = useState('');
@@ -111,7 +112,6 @@ function App() {
     }
   };
 
-  // ================= FUNCIÓN DE ALERTA INTELIGENTE DE TIEMPO PARA CITAS =================
   const obtenerEstadoTiempoCita = (fechaStr, horaStr) => {
     if (!fechaStr) return { texto: 'Programada', color: '#34d399', bg: 'rgba(16, 185, 129, 0.15)' };
     
@@ -139,7 +139,6 @@ function App() {
     return { texto: `🟢 En ${dias} días`, color: '#34d399', bg: 'rgba(16, 185, 129, 0.15)' };
   };
 
-  // ================= ELIMINAR CITA ATENDIDA Y PEDIDO ENTREGADO =================
   const eliminarCitaAtendida = async (id) => {
     if (!window.confirm('¿Confirmar que esta cita ya fue atendida y eliminarla de la lista?')) return;
     try {
@@ -166,7 +165,6 @@ function App() {
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
 
-  // ================= FUNCIONES DEL CARRITO =================
   const agregarAlCarrito = (producto) => {
     setCarrito((prev) => {
       const existe = prev.find((item) => item.id === producto.id);
@@ -253,7 +251,6 @@ function App() {
     }
   };
 
-  // ================= FUNCIONES CITAS Y ADMIN =================
   const guardarCita = async (e) => {
     e.preventDefault();
     try {
@@ -310,6 +307,38 @@ function App() {
       setNuevoServNombre(''); setNuevoServDesc(''); setNuevoServPrecio(''); setNuevoServImg('');
       setServicioExito(true);
       setTimeout(() => setServicioExito(false), 4000);
+    }
+  };
+
+  // Función para activar el modal de edición de servicio
+  const prepararEdicionServicio = (servicio) => {
+    setServicioEditando(servicio);
+  };
+
+  const guardarEdicionServicio = async (e) => {
+    e.preventDefault();
+    if (!servicioEditando) return;
+    try {
+      const res = await fetch(`${API_URL}/api/servicios/${servicioEditando.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: servicioEditando.nombre,
+          descripcion: servicioEditando.descripcion,
+          precio: Number(servicioEditando.precio),
+          categoria_id: Number(servicioEditando.categoria_id || 1)
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setServicioEditando(null);
+        cargarTodo();
+      }
+    } catch (err) {
+      setServicios((prev) =>
+        prev.map((item) => (item.id === servicioEditando.id ? servicioEditando : item))
+      );
+      setServicioEditando(null);
     }
   };
 
@@ -434,7 +463,6 @@ function App() {
     i.categoria_insumo.toLowerCase().includes(busquedaProducto.toLowerCase())
   );
 
-  // Contar cuántas citas son urgentes (hoy o próximas 24h)
   const citasUrgentesCount = citas.filter(c => {
     const alerta = obtenerEstadoTiempoCita(c.fecha_cita, c.hora_cita);
     return alerta.texto.includes('HOY') || alerta.texto.includes('CURSO');
@@ -592,6 +620,43 @@ function App() {
                 </form>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* MODAL EDITAR SERVICIO (ADMIN) */}
+      {servicioEditando && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(7, 9, 14, 0.85)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100, padding: '1rem' }}>
+          <div style={{ backgroundColor: '#12151c', padding: '2.5rem', borderRadius: '12px', border: '1px solid #d4af37', width: '100%', maxWidth: '450px' }}>
+            <h3 style={{ color: '#d4af37', marginTop: 0, marginBottom: '1.2rem', fontSize: '1.35rem' }}>✏️ Editar Servicio</h3>
+            <form onSubmit={guardarEdicionServicio}>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Nombre del Servicio</label>
+                <input type="text" value={servicioEditando.nombre} onChange={(e) => setServicioEditando({ ...servicioEditando, nombre: e.target.value })} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
+              </div>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Descripción</label>
+                <input type="text" value={servicioEditando.descripcion} onChange={(e) => setServicioEditando({ ...servicioEditando, descripcion: e.target.value })} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
+              </div>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Precio ($ MXN)</label>
+                <input type="number" value={servicioEditando.precio} onChange={(e) => setServicioEditando({ ...servicioEditando, precio: e.target.value })} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white', boxSizing: 'border-box' }} />
+              </div>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ color: '#cbd5e1', display: 'block', fontSize: '0.82rem', marginBottom: '0.4rem' }}>Categoría</label>
+                <select value={servicioEditando.categoria_id} onChange={(e) => setServicioEditando({ ...servicioEditando, categoria_id: e.target.value })} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', backgroundColor: '#07090e', border: '1px solid #1a2233', color: 'white' }}>
+                  {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre_categoria}</option>)}
+                </select>
+              </div>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button type="submit" style={{ flex: 1, padding: '0.8rem', backgroundColor: '#d4af37', color: '#07090e', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>
+                  GUARDAR CAMBIOS
+                </button>
+                <button type="button" onClick={() => setServicioEditando(null)} style={{ flex: 1, padding: '0.8rem', backgroundColor: '#1a2233', color: '#f8fafc', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
+                  CANCELAR
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -906,7 +971,6 @@ function App() {
               <p style={{ color: '#94a3b8', fontSize: '0.95rem', margin: '0.4rem 0 0' }}>Supervise citas de clientes, alertas de tiempo, pedidos y gestione catálogos.</p>
             </div>
 
-            {/* Banner de Aviso de Citas Próximas */}
             {citasUrgentesCount > 0 && (
               <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', padding: '1rem 1.5rem', borderRadius: '10px', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <span style={{ fontSize: '1.5rem' }}>🔔</span>
@@ -919,7 +983,7 @@ function App() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '2rem' }}>
               
-              {/* 1. Citas Solicitadas con Alerta de Tiempo y Botón de Atendida/Eliminar */}
+              {/* Citas Solicitadas */}
               <div style={{ backgroundColor: '#12151c', padding: '2rem', borderRadius: '12px', border: '1px solid #1a2233', overflowX: 'auto', height: 'fit-content' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                   <div>
@@ -979,7 +1043,7 @@ function App() {
                 </table>
               </div>
 
-              {/* 2. Pedidos de Carrito Solicitados con Botón de Entregado/Eliminar */}
+              {/* Pedidos de Tienda */}
               <div style={{ backgroundColor: '#12151c', padding: '2rem', borderRadius: '12px', border: '1px solid #d4af37', overflowX: 'auto', height: 'fit-content' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                   <div>
@@ -1063,35 +1127,6 @@ function App() {
                   <button type="submit" style={{ width: '100%', padding: '0.9rem', backgroundColor: '#d4af37', color: '#07090e', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>REGISTRAR SERVICIO</button>
                 </form>
               </div>
-              {/* Sección de Gestión de Servicios en Admin */}
-<div style={{ marginTop: '2.5rem', background: '#12151c', padding: '2.5rem', borderRadius: '11px', border: '1px solid #1a2233' }}>
-  <h3 style={{ color: '#d4af37', fontSize: '1.4rem', marginBottom: '1.5rem' }}>🛠️ Gestión y Edición de Servicios Activos</h3>
-  
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-    {servicios.map((servicio) => (
-      <div key={servicio.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1a2233', padding: '1rem', borderRadius: '8px', border: '1px solid #2a3447' }}>
-        <div>
-          <h4 style={{ color: '#fff', margin: '0 0 0.3rem 0', fontSize: '1.1rem' }}>{servicio.nombre}</h4>
-          <span style={{ color: '#d4af37', fontSize: '0.9rem' }}>Precio: ${servicio.precio}</span>
-        </div>
-        <div style={{ display: 'flex', gap: '0.8rem' }}>
-          <button 
-            onClick={() => prepararEdicionServicio(servicio)} 
-            style={{ padding: '0.5rem 1rem', background: '#d4af37', color: '#12151c', border: 'none', borderRadius: '6px', fontWeight: '700', cursor: 'pointer' }}
-          >
-            Editar
-          </button>
-          <button 
-            onClick={() => eliminarServicio(servicio.id)} 
-            style={{ padding: '0.5rem 1rem', background: '#8b0000', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '700', cursor: 'pointer' }}
-          >
-            Eliminar
-          </button>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
 
               {/* Agregar Producto */}
               <div style={{ backgroundColor: '#12151c', padding: '2.5rem', borderRadius: '12px', border: '1px solid #1a2233' }}>
@@ -1138,9 +1173,19 @@ function App() {
                   <h4 style={{ color: '#fff', borderBottom: '1px solid #1a2233', paddingBottom: '0.5rem' }}>Servicios Activos</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '220px', overflowY: 'auto', marginTop: '0.8rem' }}>
                     {servicios.map(s => (
-                      <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#07090e', padding: '0.6rem 0.9rem', borderRadius: '6px', border: '1px solid #1a2233' }}>
-                        <span style={{ color: '#cbd5e1', fontSize: '0.85rem' }}>{s.nombre}</span>
-                        <button onClick={() => eliminarServicioAdmin(s.id)} style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid #ef4444', padding: '0.25rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>Eliminar</button>
+                      <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#07090e', padding: '0.6rem 0.9rem', borderRadius: '6px', border: '1px solid #1a2233', gap: '8px' }}>
+                        <div style={{ flex: 1 }}>
+                          <span style={{ color: '#cbd5e1', fontSize: '0.85rem', display: 'block', fontWeight: 600 }}>{s.nombre}</span>
+                          <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>${Number(s.precio).toLocaleString('es-MX')}</span>
+                        </div>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button onClick={() => prepararEdicionServicio(s)} style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#d4af37', border: '1px solid #d4af37', padding: '0.25rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
+                            Editar
+                          </button>
+                          <button onClick={() => eliminarServicioAdmin(s.id)} style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid #ef4444', padding: '0.25rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
+                            Eliminar
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
