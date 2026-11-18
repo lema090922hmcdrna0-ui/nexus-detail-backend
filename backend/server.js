@@ -281,6 +281,9 @@ app.get('/api/consultas', async (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+  res.json({ status: 'API de Nexus Detail funcionando correctamente' });
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Backend de Nexus Detail activo en http://localhost:${PORT}`);
