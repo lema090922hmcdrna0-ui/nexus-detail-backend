@@ -34,11 +34,13 @@ function App() {
   ]);
 
   const [empleados, setEmpleados] = useState([
-    { id: 1, nombre_empleado: 'Carlos Mendoza', especialidad: 'Especialista en Cerámicos & PPF', telefono: '5512345678', estado: 'Disponible' }
+    { id: 1, nombre_empleado: 'Carlos Mendoza', especialidad: 'Especialista en Cerámicos & PPF', telefono: '5512345678', estado: 'Disponible' },
+    { id: 2, nombre_empleado: 'Roberto Gómez', especialidad: 'Maestro en Corrección de Pintura', telefono: '5587654321', estado: 'Disponible' }
   ]);
 
   const [promociones, setPromociones] = useState([
-    { id: 1, titulo_promo: 'Pack Aniversario Cerámico', descripcion_promo: 'Incluye recubrimiento cerámico 9H y lavado con 15% off.', descuento_porcentaje: 15, vigencia: '2026-06-30' }
+    { id: 1, titulo_promo: 'Pack Aniversario Cerámico', descripcion_promo: 'Incluye recubrimiento cerámico 9H y lavado con 15% off.', descuento_porcentaje: 15, vigencia: '2026-06-30' },
+    { id: 2, titulo_promo: 'Mantenimiento de Interiores', descripcion_promo: 'Sanitización con ozono e hidratación de pieles.', descuento_porcentaje: 20, vigencia: '2026-05-15' }
   ]);
 
   const [busquedaServicio, setBusquedaServicio] = useState('');
@@ -502,7 +504,7 @@ function App() {
       <div style={{ maxWidth: '1200px', margin: '2.5rem auto', padding: '0 1.5rem' }}>
 
         {/* 1. SERVICIOS */}
-        {!isAdmin && tab === 'servicios' && (
+        {tab === 'servicios' && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: '3rem', backgroundColor: '#0d111a', padding: '3rem 2rem', borderRadius: '16px', border: '1px solid #1a2233' }}>
               <span style={{ color: '#06b6d4', fontWeight: 700, letterSpacing: '2px', fontSize: '0.9rem', textTransform: 'uppercase' }}>Estudio Automotriz de Alta Gama</span>
@@ -534,7 +536,7 @@ function App() {
               {serviciosFiltrados.map(s => (
                 <div key={s.id} style={{ backgroundColor: '#0d111a', borderRadius: '14px', border: '1px solid #1a2233', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'transform 0.3s' }}>
                   <div style={{ overflow: 'hidden', height: '220px' }}>
-                    <img src={s.imagen_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=800&q=80'} alt={s.nombre} style={{ height: '100%', width: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} />
+                    <img src={s.imagen_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=800&q=80'} alt={s.nombre} style={{ height: '100%', width: '100%', objectFit: 'cover' }} />
                   </div>
                   <div style={{ padding: '1.8rem', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
                     <div>
@@ -561,7 +563,7 @@ function App() {
         )}
 
         {/* 2. CITAS */}
-        {!isAdmin && tab === 'citas' && (
+        {tab === 'citas' && (
           <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: '#0d111a', padding: '3rem', borderRadius: '16px', border: '1px solid #1a2233' }}>
             <h2 style={{ color: '#06b6d4', fontSize: '2.2rem', fontWeight: 900, textAlign: 'center', marginBottom: '0.5rem' }}>Agendar Tratamiento</h2>
             <p style={{ color: '#94a3b8', textAlign: 'center', marginBottom: '2.5rem' }}>Reserva tu espacio en nuestro estudio especializado.</p>
@@ -608,7 +610,7 @@ function App() {
         )}
 
         {/* 3. TIENDA / INVENTARIO */}
-        {!isAdmin && tab === 'inventario' && (
+        {tab === 'inventario' && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: '3rem', backgroundColor: '#0d111a', padding: '3rem 2rem', borderRadius: '16px', border: '1px solid #1a2233' }}>
               <h2 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#fff', marginBottom: '0.5rem' }}>TIENDA & QUÍMICOS PROFESIONALES</h2>
@@ -650,44 +652,66 @@ function App() {
           </div>
         )}
 
-        {/* 4. EMPLEADOS */}
-        {!isAdmin && tab === 'empleados' && (
+        {/* 4. EQUIPO (REDESIGN COMPLETO - NO MÁS TABLAS SIMPLES) */}
+        {tab === 'empleados' && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: '3rem', backgroundColor: '#0d111a', padding: '3rem 2rem', borderRadius: '16px', border: '1px solid #1a2233' }}>
-              <h2 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#fff', marginBottom: '0.5rem' }}>NUESTRO EQUIPO TÉCNICO</h2>
-              <p style={{ color: '#94a3b8', fontSize: '1.1rem' }}>Especialistas certificados internacionalmente en protección de pintura y detailing.</p>
+              <span style={{ color: '#06b6d4', fontWeight: 700, letterSpacing: '2px', fontSize: '0.9rem', textTransform: 'uppercase' }}>Profesionales Certificados</span>
+              <h2 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#fff', margin: '0.5rem 0' }}>NUESTRO EQUIPO TÉCNICO</h2>
+              <p style={{ color: '#94a3b8', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>Maestros artesanos en el cuidado estético y protección de vehículos de alta gama.</p>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem' }}>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '2.5rem' }}>
               {empleados.map(e => (
-                <div key={e.id} style={{ backgroundColor: '#0d111a', borderRadius: '14px', border: '1px solid #1a2233', padding: '2.5rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>👨‍🔧</div>
-                  <h3 style={{ color: '#fff', fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.5rem' }}>{e.nombre_empleado}</h3>
-                  <p style={{ color: '#06b6d4', fontWeight: 600, marginBottom: '1rem' }}>{e.especialidad}</p>
-                  <span style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '0.4rem 1rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700 }}>
-                    {e.estado || 'Disponible'}
-                  </span>
+                <div key={e.id} style={{ backgroundColor: '#0d111a', borderRadius: '16px', border: '1px solid #1a2233', padding: '2.5rem', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+                  <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(6,182,212,0.15) 0%, transparent 70%)', pointerEvents: 'none' }}></div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginBottom: '1.5rem' }}>
+                    <div style={{ width: '70px', height: '70px', borderRadius: '50%', backgroundColor: '#161e2e', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '2.2rem', border: '2px solid #06b6d4' }}>
+                      👨‍🔧
+                    </div>
+                    <div>
+                      <h3 style={{ color: '#fff', fontSize: '1.35rem', fontWeight: 900, margin: 0 }}>{e.nombre_empleado}</h3>
+                      <span style={{ color: '#06b6d4', fontSize: '0.9rem', fontWeight: 600 }}>Técnico Especialista</span>
+                    </div>
+                  </div>
+                  <p style={{ color: '#94a3b8', fontSize: '0.95rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+                    Especialidad principal: <strong style={{ color: '#fff' }}>{e.especialidad}</strong>
+                  </p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #1a2233', paddingTop: '1.2rem' }}>
+                    <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>📞 Ext. Contacto Directo</span>
+                    <span style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '0.4rem 1rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 800 }}>
+                      {e.estado || 'Disponible'}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* 5. PROMOCIONES */}
-        {!isAdmin && tab === 'promociones' && (
+        {/* 5. PROMOCIONES (REDESIGN COMPLETO - NO MÁS TABLAS SIMPLES) */}
+        {tab === 'promociones' && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: '3rem', backgroundColor: '#0d111a', padding: '3rem 2rem', borderRadius: '16px', border: '1px solid #1a2233' }}>
-              <h2 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#fff', marginBottom: '0.5rem' }}>PROMOCIONES ESPECIALES</h2>
-              <p style={{ color: '#94a3b8', fontSize: '1.1rem' }}>Aprovecha nuestros paquetes exclusivos de temporada.</p>
+              <span style={{ color: '#06b6d4', fontWeight: 700, letterSpacing: '2px', fontSize: '0.9rem', textTransform: 'uppercase' }}>Ofertas Exclusivas Apex</span>
+              <h2 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#fff', margin: '0.5rem 0' }}>PROMOCIONES DE TEMPORADA</h2>
+              <p style={{ color: '#94a3b8', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>Potencia el brillo de tu auto con nuestros paquetes especiales de descuento limitado.</p>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '2rem' }}>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '2.5rem' }}>
               {promociones.map(p => (
-                <div key={p.id} style={{ backgroundColor: '#0d111a', borderRadius: '14px', border: '1px solid #06b6d4', padding: '2.5rem', position: 'relative' }}>
-                  <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', backgroundColor: '#06b6d4', color: '#07090e', padding: '0.4rem 0.9rem', borderRadius: '6px', fontWeight: 900 }}>
+                <div key={p.id} style={{ backgroundColor: '#0d111a', borderRadius: '16px', border: '1px solid #06b6d4', padding: '2.8rem', position: 'relative', boxShadow: '0 15px 35px rgba(6,182,212,0.1)' }}>
+                  <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', backgroundColor: '#06b6d4', color: '#07090e', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 900, fontSize: '1rem' }}>
                     -{p.descuento_porcentaje}% OFF
                   </div>
-                  <h3 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.8rem' }}>{p.titulo_promo}</h3>
-                  <p style={{ color: '#94a3b8', lineHeight: 1.6, marginBottom: '1.5rem' }}>{p.descripcion_promo}</p>
-                  <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Vigencia hasta: {p.vigencia}</p>
+                  <h3 style={{ color: '#fff', fontSize: '1.6rem', fontWeight: 900, marginBottom: '0.8rem' }}>{p.titulo_promo}</h3>
+                  <p style={{ color: '#94a3b8', lineHeight: 1.6, marginBottom: '2rem', fontSize: '1rem' }}>{p.descripcion_promo}</p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #1a2233', paddingTop: '1.2rem' }}>
+                    <span style={{ fontSize: '0.85rem', color: '#64748b' }}>⏳ Vigente hasta: {p.vigencia}</span>
+                    <button onClick={() => setTab('citas')} style={{ backgroundColor: 'transparent', color: '#06b6d4', border: '1px solid #06b6d4', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
+                      Aprovechar ➔
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -794,16 +818,16 @@ function App() {
                   </div>
                 )}
                 <form onSubmit={agregarServicioAdmin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <input type="text" placeholder="Nombre del servicio" required value={nuevoServNombre} onChange={e => setNuevoServNombre(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px' }} />
-                  <textarea placeholder="Descripción detallada" required value={nuevoServDesc} onChange={e => setNuevoServDesc(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px', minHeight: '80px' }} />
-                  <input type="number" placeholder="Precio ($)" required value={nuevoServPrecio} onChange={e => setNuevoServPrecio(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px' }} />
-                  <input type="text" placeholder="URL de Imagen (Unsplash, etc.)" value={nuevoServImg} onChange={e => setNuevoServImg(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px' }} />
-                  <select value={nuevoServCat} onChange={e => setNuevoServCat(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px' }}>
+                  <input type="text" placeholder="Nombre del servicio" required value={nuevoServNombre} onChange={e => setNuevoServNombre(e.target.value)} style={{ padding: '0.9rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+                  <textarea placeholder="Descripción detallada" required value={nuevoServDesc} onChange={e => setNuevoServDesc(e.target.value)} style={{ padding: '0.9rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px', minHeight: '80px', outline: 'none' }} />
+                  <input type="number" placeholder="Precio ($)" required value={nuevoServPrecio} onChange={e => setNuevoServPrecio(e.target.value)} style={{ padding: '0.9rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+                  <input type="text" placeholder="URL de Imagen (Unsplash, etc.)" value={nuevoServImg} onChange={e => setNuevoServImg(e.target.value)} style={{ padding: '0.9rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+                  <select value={nuevoServCat} onChange={e => setNuevoServCat(e.target.value)} style={{ padding: '0.9rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px', outline: 'none' }}>
                     {categorias.map(cat => (
                       <option key={cat.id} value={cat.id}>{cat.nombre_categoria}</option>
                     ))}
                   </select>
-                  <button type="submit" style={{ backgroundColor: '#06b6d4', color: '#07090e', border: 'none', padding: '0.9rem', borderRadius: '8px', fontWeight: 900, cursor: 'pointer', marginTop: '0.5rem' }}>
+                  <button type="submit" style={{ backgroundColor: '#06b6d4', color: '#07090e', border: 'none', padding: '1rem', borderRadius: '8px', fontWeight: 900, cursor: 'pointer', marginTop: '0.5rem' }}>
                     Registrar Servicio
                   </button>
                 </form>
@@ -818,14 +842,14 @@ function App() {
                   </div>
                 )}
                 <form onSubmit={agregarProductoAdmin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <input type="text" placeholder="Nombre del producto" required value={nuevoProdNombre} onChange={e => setNuevoProdNombre(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px' }} />
-                  <input type="text" placeholder="Categoría (Ej. Químicos, Accesorios)" required value={nuevoProdCat} onChange={e => setNuevoProdCat(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px' }} />
+                  <input type="text" placeholder="Nombre del producto" required value={nuevoProdNombre} onChange={e => setNuevoProdNombre(e.target.value)} style={{ padding: '0.9rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+                  <input type="text" placeholder="Categoría (Ej. Químicos, Accesorios)" required value={nuevoProdCat} onChange={e => setNuevoProdCat(e.target.value)} style={{ padding: '0.9rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px', outline: 'none' }} />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <input type="number" placeholder="Stock" required value={nuevoProdStock} onChange={e => setNuevoProdStock(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px' }} />
-                    <input type="number" placeholder="Precio ($)" required value={nuevoProdPrecio} onChange={e => setNuevoProdPrecio(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px' }} />
+                    <input type="number" placeholder="Stock" required value={nuevoProdStock} onChange={e => setNuevoProdStock(e.target.value)} style={{ padding: '0.9rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+                    <input type="number" placeholder="Precio ($)" required value={nuevoProdPrecio} onChange={e => setNuevoProdPrecio(e.target.value)} style={{ padding: '0.9rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px', outline: 'none' }} />
                   </div>
-                  <input type="text" placeholder="Proveedor" required value={nuevoProdProv} onChange={e => setNuevoProdProv(e.target.value)} style={{ padding: '0.8rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px' }} />
-                  <button type="submit" style={{ backgroundColor: '#06b6d4', color: '#07090e', border: 'none', padding: '0.9rem', borderRadius: '8px', fontWeight: 900, cursor: 'pointer', marginTop: '1.4rem' }}>
+                  <input type="text" placeholder="Proveedor" required value={nuevoProdProv} onChange={e => setNuevoProdProv(e.target.value)} style={{ padding: '0.9rem', backgroundColor: '#07090e', border: '1px solid #1a2233', color: '#fff', borderRadius: '8px', outline: 'none' }} />
+                  <button type="submit" style={{ backgroundColor: '#06b6d4', color: '#07090e', border: 'none', padding: '1rem', borderRadius: '8px', fontWeight: 900, cursor: 'pointer', marginTop: '1.4rem' }}>
                     Registrar Producto
                   </button>
                 </form>
